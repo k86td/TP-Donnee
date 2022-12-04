@@ -8,7 +8,7 @@
 var clc = require("cli-color");
 exports.TOKEN_EndPoint = function (HttpContext) {
     return new Promise(async (resolve) => {
-        if (HttpContext.req.url == '/token' && HttpContext.req.method == "POST") {
+        if (HttpContext.req.url == '/api/token' && HttpContext.req.method == "POST") {
             try {
                 const AccountsController = require('./controllers/AccountsController');
                 let accountsController = new AccountsController(HttpContext);

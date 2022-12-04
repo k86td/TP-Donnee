@@ -7,7 +7,7 @@ const Gmail = require("../gmail");
 module.exports =
     class AccountsController extends require('./Controller') {
         constructor(HttpContext,) {
-            super(HttpContext, new usersRepository(), true /* read authorisation */);
+            super(HttpContext, new usersRepository(), true /* read authorisation */, false);
         }
 
         index(id) {
@@ -21,7 +21,8 @@ module.exports =
                     this.HttpContext.response.unAuthorized();
             }
         }
-        // POST: /token body payload[{"Email": "...", "Password": "..."}]
+
+        // POST: /api/token body payload[{"Email": "...", "Password": "..."}]
         login(loginInfo) {
             let user = this.repository.findByField("Email", loginInfo.Email);
             if (user != null) {
