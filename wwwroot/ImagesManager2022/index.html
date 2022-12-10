@@ -90,6 +90,7 @@
                 </div>
                 <div id="newAccountDlg">
                     <form id="newAccountForm">
+                        <input type="hidden" id="GUID_input_avatar" value="">
 
                         <label for="name">Nom</label>
                         <input type="text" id="name" class="form-control" required>
@@ -99,6 +100,12 @@
 
                         <label for="password">Password</label>
                         <input type="password" id="password" class="form-control" required></input>
+
+                        <label for="imageAvatar">Image</label>
+                        <div id='imageAvatar' class='ImageUploader' defaultImage='images/No_Image.png'
+                            waitingImage='images/writing.gif'>
+                        </div>
+                        <div class="note">Cliquez-Déposez une image</div>
                     </form>
                 </div>
                 <div id="confirmDeleteDlg">
