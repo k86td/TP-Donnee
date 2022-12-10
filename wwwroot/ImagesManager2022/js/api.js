@@ -64,11 +64,12 @@ function DELETE(id, successCallBack, errorCallBack) {
  * @param {Function} errorCallBack 
  */
 function uPost(endpoint, data, successCallBack, errorCallBack) {
+	console.debug(`Accessing ${endpoint} with ${JSON.stringify(data)}`);
     $.ajax({
         url: baseUrl + endpoint,
         type: 'POST',
         contentType: 'application/json',
-        data: data,
+        data: JSON.stringify(data),
         success: (data) => { successCallBack(data) },
         error: function (jqXHR) { errorCallBack(jqXHR.status) }
     });

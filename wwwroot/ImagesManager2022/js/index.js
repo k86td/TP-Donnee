@@ -205,10 +205,10 @@ function accountFromForm() {
 function accountToForm(previousInfo = undefined) {
 	if (previousInfo == undefined) {
 		// clear form
-		let id = $("#Id").val("");
-		let name = $("#name").val("");
-		let email = $("#email").val("");
-		let password = $("#password").val("");
+		$("#Id").val("");
+		$("#name").val("");
+		$("#email").val("");
+		$("#password").val("");
 	}
 }
 
@@ -235,6 +235,7 @@ function init_UI() {
 			click: function() {
 				if (document.getElementById("newAccountForm").reportValidity()) {
 					let formData = accountFromForm();
+					console.debug(formData);
 					uPost("/Accounts/register", formData, () => "", error);
 					$(this).dialog('close');
 				}
