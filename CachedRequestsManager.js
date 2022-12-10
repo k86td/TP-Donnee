@@ -8,7 +8,7 @@ class CachedRequestsManager {
     static add(url, content, ETag = "") {
         if (url != "") {
             CachedRequests.push({ url, content, ETag, Expire_Time: utilities.nowInSeconds() + CachedRequestsExpirationTime });
-            log(BgCyan, FgWhite, "Response content of request Get: ", url, " added in requests cache");
+            log("Response content of request Get: ", url, " added in requests cache");
         }
     }
     static find(url) {
@@ -18,7 +18,7 @@ class CachedRequestsManager {
                     if (endpoint.url == url) {
                         // renew cached url
                         endpoint.Expire_Time = utilities.nowInSeconds() + CachedRequestsExpirationTime;
-                        log(BgGreen, FgWhite, "Response content of request Get: ", url, " retreived from requests cache");
+                        log("Response content of request Get: ", url, " retreived from requests cache");
                         let content = endpoint.content;
                         let ETag = endpoint.ETag;
                         return { ETag, content };
@@ -50,7 +50,7 @@ class CachedRequestsManager {
         let now = utilities.nowInSeconds();
         for (let endpoint of CachedRequests) {
             if (endpoint.Expire_Time < now) {
-                log(BgYellow, FgBlack, "Cached response of request GET:", endpoint.url + " expired");
+                log("Cached response of request GET:", endpoint.url + " expired");
                 indexToDelete.push(index);
             }
             index++;
@@ -74,6 +74,6 @@ class CachedRequestsManager {
 
 // periodic cleaning of expired cached requests
 setInterval(CachedRequestsManager.flushExpired, CachedRequestsExpirationTime * 1000);
-log(BgWhite, FgBlack, "Periodic cached requests cleaning process started...");
+log("Periodic cached requests cleaning process started...");
 
 module.exports = CachedRequestsManager;
