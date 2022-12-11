@@ -190,17 +190,24 @@ function imageToForm(image) {
 	ImageUploader.setImage('image', image.OriginalURL);
 }
 function accountFromForm() {
-	let id = $("#Id").val() ? $("#Id").val() : 0;
-	let name = $("#name").val();
-	let email = $("#email").val();
-	let password = $("#password").val();
 
-	return {
-		"Id": id,
-		"Name": name,
-		"Email": email,
-		"Password": password
-	};
+	if ($("#newAccountForm")[0].checkValidity()) {
+		let id = $("#Id").val() ? $("#Id").val() : 0;
+		let name = $("#name").val();
+		let email = $("#email").val();
+		let password = $("#password").val();
+		let avaterGuid = ImageUploader.getImageData('imageAvatar');
+
+		return {
+			"Id": id,
+			"Name": name,
+			"Email": email,
+			"Password": password,
+			"AvatarGUID": avaterGuid.GUID
+		};
+	}
+	else
+		$("#newAccountForm")[0].reportValidity()
 }
 function accountToForm(previousInfo = undefined) {
 	if (previousInfo == undefined) {
@@ -209,6 +216,7 @@ function accountToForm(previousInfo = undefined) {
 		$("#name").val("");
 		$("#email").val("");
 		$("#password").val("");
+		ImageUploader.resetImage('imageAvatar');
 	}
 }
 
@@ -223,12 +231,12 @@ function init_UI() {
 		modal: true,
 		show: { effect: 'fade', speed: 400 },
 		hide: { effect: 'fade', speed: 400 },
-		width: 640,
+		width: 700,
 		minWidth: 640,
-		maxWidth: 640,
-		height: 780,
-		minHeight: 780,
-		maxHeight: 780,
+		maxWidth: 700,
+		height: 800,
+		minHeight: 640,
+		maxHeight: 800,
 		buttons: [{
 			id: "newUserDlgOkBtn",
 			text: "S'inscrire",
