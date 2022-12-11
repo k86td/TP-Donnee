@@ -118,6 +118,7 @@ function error(status) {
 }
 
 function newAccount() {
+	ImageUploader.imageRequired('imageAvatar', false)
 	accountToForm();
 	$("#newAccountDlg").dialog('option', 'title', 'Inscription');
 	$("#newAccountDlg").dialog('open');
@@ -196,14 +197,14 @@ function accountFromForm() {
 		let name = $("#name").val();
 		let email = $("#email").val();
 		let password = $("#password").val();
-		let avaterGuid = ImageUploader.getImageData('imageAvatar');
+		let avatar = ImageUploader.getImageData('imageAvatar');
 
 		return {
 			"Id": id,
 			"Name": name,
 			"Email": email,
 			"Password": password,
-			"AvatarGUID": avaterGuid.GUID
+			"ImageData": avatar
 		};
 	}
 	else
@@ -220,8 +221,27 @@ function accountToForm(previousInfo = undefined) {
 	}
 }
 
+const _passwordMismatchErrorMessage = "La confirmation du mot de passe n'est pas identitque au mot de passe";
+function setPasswordConfirmationFor (password, confirmation) {
+	let pwd = document.getElementById(password);
+	let conf = document.getElementById(confirmation);
+
+	const passwordConfirmationHandler = () => {
+		if (pwd.value != conf.value)
+			conf.setCustomValidity(_passwordMismatchErrorMessage);
+		else
+			conf.setCustomValidity("");
+	};
+
+	pwd.onchange = passwordConfirmationHandler;
+	conf.onkeyup = passwordConfirmationHandler;
+}
+
+
 
 function init_UI() {
+	setPasswordConfirmationFor('password', 'password_confirmation');
+
 	$("#newImageCmd").click(newImage);
 	$("#newAccountCmd").click(newAccount);
 
