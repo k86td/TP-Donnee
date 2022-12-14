@@ -123,6 +123,13 @@ function newAccount() {
 	$("#newAccountDlg").dialog('option', 'title', 'Inscription');
 	$("#newAccountDlg").dialog('open');
 }
+
+function loginDlg () {
+	$('#emailLogin').val('');
+	$('#passwordLogin').val('');
+	$('#accountLoginDlg').dialog('open');
+}
+
 function newImage() {
 	holdCheckETag = true;
 	createMode = true;
@@ -237,6 +244,15 @@ function setPasswordConfirmationFor (password, confirmation) {
 	conf.onkeyup = passwordConfirmationHandler;
 }
 
+function loginHandler () {
+	if (document.getElementById('accountLoginForm').reportValidity()) {
+		let email = $("#emailLogin").val();
+		let password = $("#passwordLogin").val();
+
+		uPost('/token', { "Email" : email, "Password" : password });
+	}
+}
+
 
 
 function init_UI() {
@@ -244,6 +260,7 @@ function init_UI() {
 
 	$("#newImageCmd").click(newImage);
 	$("#newAccountCmd").click(newAccount);
+	$("#loginAccountCmd").click(loginDlg);
 
 	$("#newAccountDlg").dialog({
 		title: "...",
@@ -267,6 +284,29 @@ function init_UI() {
 					uPost("/Accounts/register", formData, () => "", error);
 					$(this).dialog('close');
 				}
+			}
+		},
+		{
+			text: "Annuler",
+			click: function() {
+				$(this).dialog("close");
+			}
+		}]
+	});
+
+	$("#accountLoginDlg").dialog({
+		title: "Connexion",
+		autoOpen: false,
+		modal: true,
+		show: { effect: 'fade', speed: 400 },
+		hide: { effect: 'fade', speed: 400 },
+		width: 500,
+		height: 350,
+		buttons: [{
+			id: "loginUserDlgOkBtn",
+			text: "Connexion",
+			click: function() {
+				loginHandler();
 			}
 		},
 		{

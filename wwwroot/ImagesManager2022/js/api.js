@@ -59,7 +59,6 @@ function DELETE(id, successCallBack, errorCallBack) {
  * Unprotected post to endpoint
  * @param {string} endpoint 
  * @param {object} data 
- * @param {string} token 
  * @param {Function} successCallBack 
  * @param {Function} errorCallBack 
  */

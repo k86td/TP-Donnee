@@ -59,8 +59,13 @@
                     <span class="cmd fa fa-plus-square" id="newImageCmd" title="Ajouter un image"
                         data-toggle="tooltip"></span>
                     </div>
-                    <span class="cmd fa-solid fa-user-plus" id="newAccountCmd" title="Créer un compte"
-                        data-toggle="tooltip"></span>
+					<div id="connexionMgmt">
+						<span class="cmd fa-solid fa-user-plus" id="newAccountCmd" title="Créer un compte"
+							data-toggle="tooltip"></span>
+
+						<span class="cmd fa-solid fa-right-to-bracket" id="loginAccountCmd" title="Connexion"
+							data-toggle="tooltip"></span>
+					</div>
             </div>
 
             <div class="scrollContainer">
@@ -86,6 +91,17 @@
                             waitingImage='images/writing.gif'>
                         </div>
                         <div class="note">Cliquez-Déposez une image</div>
+                    </form>
+                </div>
+                <div id="accountLoginDlg">
+                    <form id="accountLoginForm">
+
+                        <label for="emailLogin">Email</label>
+                        <input type="text" id="emailLogin" class="form-control" required pattern="\w+@\w+\.\w+" title="Entrer un email valide (email@domaine.tld)"></input>
+
+                        <label for="passwordLogin">Password</label>
+                        <input type="password" id="passwordLogin" class="form-control" required></input>
+
                     </form>
                 </div>
                 <div id="newAccountDlg">
