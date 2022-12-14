@@ -280,9 +280,39 @@ function init_UI() {
 			click: function() {
 				if (document.getElementById("newAccountForm").reportValidity()) {
 					let formData = accountFromForm();
-					console.debug(formData);
 					uPost("/Accounts/register", formData, () => "", error);
+
 					$(this).dialog('close');
+				}
+			}
+		},
+		{
+			text: "Annuler",
+			click: function() {
+				$(this).dialog("close");
+			}
+		}]
+	});
+
+	$("#verifyCodeDlg").dialog({
+		title: "...",
+		autoOpen: false,
+		modal: true,
+		show: { effect: 'fade', speed: 400 },
+		hide: { effect: 'fade', speed: 400 },
+		width: 500,
+		height: 350,
+		buttons: [{
+			id: "verifyCodeDlgOkBtn",
+			text: "Valider",
+			click: function() {
+				if (document.getElementById("verifyCodeForm").reportValidity()) {
+					let formData = {
+						"Id": $("#id").val(),
+						"Code": $("#code").val()
+					};
+					uGet("/Accounts/verify", formData, () => "", error);
+
 				}
 			}
 		},

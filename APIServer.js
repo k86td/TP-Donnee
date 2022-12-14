@@ -56,6 +56,7 @@ module.exports =
             const router = require('./router');
             const CachedRequestsManager = require('./CachedRequestsManager');
             this.middlewaresPipeline.add(CachedRequestsManager.get);
+            this.middlewaresPipeline.add(router.AccountsVerify_EndPoint);
             this.middlewaresPipeline.add(router.TOKEN_EndPoint);
             this.middlewaresPipeline.add(router.Registered_EndPoint);
             this.middlewaresPipeline.add(router.List_EndPoints);

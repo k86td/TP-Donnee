@@ -30,8 +30,30 @@ exports.TOKEN_EndPoint = function (HttpContext) {
     });
 }
 
+exports.AccountsVerify_EndPoint = function (HttpContext) {
+    return new Promise(async (resolve) => {
+        if (HttpContext.req.url.includes('/api/accounts/verify') && HttpContext.req.method == "GET") {
+            try {
+                const AccountsController = require('./controllers/AccountsController');
+                let accountsController = new AccountsController(HttpContext);
+                accountsController.verify();
+                resolve(true);
+            } catch (error) {
+                console.log((clc.red("AccountsVerify_EndPoint Error message: \n", error.message)));
+                console.log((clc.red("Stack: \n", error.stack)));
+                HttpContext.response.notFound();
+                resolve(true);
+            }
+        }
+        // request not consumed
+        // must be handled by another middleware
+        resolve(false);
+    });
+}
+
 // {method, ControllerName, Action}
 exports.Registered_EndPoint = function (HttpContext) {
+    
     return new Promise(async (resolve) => {
         const RouteRegister = require('./routeRegister');
         let route = RouteRegister.find(HttpContext);
