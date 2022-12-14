@@ -118,7 +118,6 @@ function error(status) {
 }
 
 function newAccount() {
-	ImageUploader.imageRequired('imageAvatar', false)
 	accountToForm();
 	$("#newAccountDlg").dialog('option', 'title', 'Inscription');
 	$("#newAccountDlg").dialog('open');
