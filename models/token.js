@@ -12,6 +12,7 @@ module.exports =
                 token.UserId = user.Id;
                 token.Username = user.Name;
                 token.Verified = user.VerifyCode;
+                token.avatarGuid = user.avatarGuid;
             }
             return token;
         }

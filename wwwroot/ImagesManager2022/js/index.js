@@ -299,16 +299,15 @@ function loginHandler () {
 
 		uPost('/accounts/login', { "Email" : email, "Password" : password }, data => {
 			if(data.Verified !== "verified"){
+				userIdToVerify = data.UserId;
 				renderConnectivityStatus(false);
 				verifyCodeDlg();
 			}
 			else{
 				$('#accountLoginDlg').dialog('close');
 				document.cookie = `access_token=${data.Access_token}`;
-				userIdToVerify = data.UserId;
+				renderConnectivityStatus(true);
 			}
-
-			renderConnectivityStatus(true);
 		}, renderConnectivityStatus(false));
 	}
 }
