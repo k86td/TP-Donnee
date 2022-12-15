@@ -125,14 +125,11 @@ function newAccount() {
 	$("#newAccountDlg").dialog('open');
 }
 
-
 function loginDlg () {
 	$('#emailLogin').val('');
 	$('#passwordLogin').val('');
 	$('#accountLoginDlg').dialog('open');
 }
-
-
 
 function newImage() {
 	holdCheckETag = true;
@@ -248,6 +245,23 @@ function setPasswordConfirmationFor (password, confirmation) {
 	conf.onkeyup = passwordConfirmationHandler;
 }
 
+function setCookie (cookieName, cookieValue, expires = undefined) {
+	let _cookie = `${cookieName}=${cookieValue}; `;
+
+	if (expires != undefined)
+		_cookie += `expires=${expires}`;
+
+	document.cookie = _cookie;
+}
+
+function unsetCookie (cookieName) {
+	document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+}
+
+function getCookie (cookieName) {
+	return document.cookie.split('; ').filter(c => c.split('=')[0] == cookieName)[0].split('=')[1];
+}
+
 async function renderConnectivityStatus (isConnected = undefined) {
 	// this function will re-render connectionMgmt depending if the user is logged in or not
 	// if isConnected is undefined, we will need to figure out if user is logged in
@@ -282,11 +296,14 @@ async function renderConnectivityStatus (isConnected = undefined) {
 	}
 
 	if (isConnected) {
-		$("#connexionMgmt").hide();
+		$("#notLoggedIn").hide();
+		$("#loggedIn").show();
 	} else {
 		// if not connected, make sure we don't have a token stored!
-		document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-		$("#connexionMgmt").show();
+		unsetCookie('access_token');
+		unsetCookie('userId');
+		$("#notLoggedIn").show();
+		$("#loggedIn").hide();
 	}
 }
 
@@ -298,6 +315,9 @@ function loginHandler () {
 		let password = $("#passwordLogin").val();
 
 		uPost('/accounts/login', { "Email" : email, "Password" : password }, data => {
+			$('#accountLoginDlg').dialog('close');
+			document.cookie = `access_token=${data.Access_token}; expires=${new Date(data.Expire_Time * 1000).toUTCString()}`;
+			document.cookie = `userId=${data.UserId}`;
 			if(data.Verified !== "verified"){
 				userIdToVerify = data.UserId;
 				renderConnectivityStatus(false);
@@ -312,23 +332,12 @@ function loginHandler () {
 	}
 }
 
-function codeVerification(userId){
-	if (document.getElementById("verifyCodeForm").reportValidity()) {
-		let code =  $("#code").val()
-		uGet("/accounts/verify?id="+ userId + "&code=" + code, (data) => {
-			$('#verifyCodeDlg').dialog('close');
-		},
-		(error) => {
-			$("#verifyErrorMessage").html("Le code que vous avez entré n'est pas valide. Veuillez réessayer.");
-			console.log(error);
-		});
-	}
+function logout () {
+	console.debug(`Login out userId ${userIdToVerify}`);
+	const _callback = () => renderConnectivityStatus(false);
+	pGet('/accounts/logout/' + getCookie('userId'), getCookie('access_token'), _callback, _callback);
 }
 
-function verifyCodeDlg(){
-	$("#code").val('');
-	$("#verifyCodeDlg").dialog('open');
-}
 
 
 function init_UI() {
@@ -338,6 +347,7 @@ function init_UI() {
 	$("#newImageCmd").click(newImage);
 	$("#newAccountCmd").click(newAccount);
 	$("#loginAccountCmd").click(loginDlg);
+	$("#logoutAccountCmd").click(logout);
 
 	$("#newAccountDlg").dialog({
 		title: "...",
@@ -357,35 +367,10 @@ function init_UI() {
 			click: function() {
 				if (document.getElementById("newAccountForm").reportValidity()) {
 					let formData = accountFromForm();
-					uPost("/Accounts/register", formData, (data) => userIdToVerify = data.Id, error);
+					console.debug(formData);
+					uPost("/Accounts/register", formData, () => "", error);
 					$(this).dialog('close');
 				}
-			}
-		},
-		{
-			text: "Annuler",
-			click: function() {
-				$(this).dialog("close");
-			}
-		}]
-	});
-
-	$("#verifyCodeDlg").dialog({
-		title: "Code de vérification",
-		autoOpen: false,
-		modal: true,
-		show: { effect: 'fade', speed: 400 },
-		hide: { effect: 'fade', speed: 400 },
-		minWidth: 300,
-		maxWidth: 400,
-		height: 300,
-		minHeight: 250,
-		maxHeight: 350,
-		buttons: [{
-			id: "verifyCodeDlgOkBtn",
-			text: "Valider",
-			click: function() {
-				codeVerification(userIdToVerify);
 			}
 		},
 		{
@@ -409,7 +394,6 @@ function init_UI() {
 			text: "Connexion",
 			click: function() {
 				loginHandler();
-				$("#loginAccountDlg").dialog('close');
 			}
 		},
 		{
