@@ -41,7 +41,7 @@ function getImagesList(refresh = true) {
 function refreshimagesList(images, ETag) {
 	function insertIntoImageList(image) {
 		let user = null;
-		uGet(`accounts/${image.UserId}`, (data) => { user = data; }, error);
+		uGet(`/accounts/${image.UserId}`, (data) => { user = data; }, error);
 		if(image.Shared || image.UserId == getCookie("userId")){
 			$("#imagesList").append(
 				$(` 
