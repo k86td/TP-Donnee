@@ -98,7 +98,7 @@ exports.decomposePath = (url) => {
 		// this should check urlParts[2] (also should be lenght - 1 of urlParts) type to allow more complex mapping!
         if (urlParts[2] != undefined) {
 			action = urlParts[2];
-            id = parseInt(urlParts[2]);
+            id = parseInt(urlParts[urlParts.length - 1]);
         }
     }
     return { isAPI, model, controllerName, action, id, queryString, params };
