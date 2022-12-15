@@ -125,8 +125,8 @@ function newAccount() {
 	$("#newAccountDlg").dialog('open');
 }
 
-function loginDlg () {
-	$('#emailLogin').val('');
+function loginDlg (options = undefined) {
+	$('#emailLogin').val('email' in options ? options.email : '');
 	$('#passwordLogin').val('');
 	$('#accountLoginDlg').dialog('open');
 }
@@ -225,6 +225,7 @@ function accountToForm(previousInfo = undefined) {
 		$("#name").val("");
 		$("#email").val("");
 		$("#password").val("");
+		$("#password_confirmation").val("");
 		ImageUploader.resetImage('imageAvatar');
 	}
 }
@@ -388,7 +389,7 @@ function init_UI() {
 				if (document.getElementById("newAccountForm").reportValidity()) {
 					let formData = accountFromForm();
 					console.debug(formData);
-					uPost("/Accounts/register", formData, () => "", error);
+					uPost("/Accounts/register", formData, (data) => loginDlg({ 'email' : data.Email }), error);
 					$(this).dialog('close');
 				}
 			}
@@ -407,11 +408,8 @@ function init_UI() {
 		modal: true,
 		show: { effect: 'fade', speed: 400 },
 		hide: { effect: 'fade', speed: 400 },
-		minWidth: 300,
-		maxWidth: 400,
+		width: 500,
 		height: 300,
-		minHeight: 250,
-		maxHeight: 350,
 		buttons: [{
 			id: "verifyCodeDlgOkBtn",
 			text: "Valider",
