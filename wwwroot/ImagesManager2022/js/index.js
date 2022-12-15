@@ -297,14 +297,14 @@ async function renderConnectivityStatus (isConnected = undefined) {
 	}
 
 	if (isConnected) {
-		$("#notLoggedIn").hide();
-		$("#loggedIn").show();
+		$(".notLoggedIn").hide();
+		$(".loggedIn").show();
 	} else {
 		// if not connected, make sure we don't have a token stored!
 		unsetCookie('access_token');
 		unsetCookie('userId');
-		$("#notLoggedIn").show();
-		$("#loggedIn").hide();
+		$(".notLoggedIn").show();
+		$(".loggedIn").hide();
 	}
 }
 
