@@ -27,6 +27,7 @@ module.exports =
             const RouteRegister = require('./routeRegister');
             RouteRegister.add('GET', 'accounts');
             RouteRegister.add('POST', 'accounts', 'register');
+            RouteRegister.add('POST', 'accounts', 'login');
             RouteRegister.add('GET', 'accounts', 'verify');
             RouteRegister.add('GET', 'accounts', 'logout');
             RouteRegister.add('PUT', 'accounts', 'modify');
@@ -56,7 +57,6 @@ module.exports =
             const router = require('./router');
             const CachedRequestsManager = require('./CachedRequestsManager');
             this.middlewaresPipeline.add(CachedRequestsManager.get);
-            this.middlewaresPipeline.add(router.TOKEN_EndPoint);
             this.middlewaresPipeline.add(router.Registered_EndPoint);
             this.middlewaresPipeline.add(router.List_EndPoints);
             this.middlewaresPipeline.add(router.API_EndPoint);
