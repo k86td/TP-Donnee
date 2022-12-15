@@ -26,6 +26,7 @@ module.exports =
         }
         add(user) {
             user["Created"] = utilities.nowInSeconds();
+            user["VerifyCode"] = utilities.makeVerifyCode(6);
             if (this.model.valid(user)) {
                 user["AvatarGUID"] = ImageFilesRepository.storeImageData("", user["ImageData"]);
                 delete user["ImageData"];
