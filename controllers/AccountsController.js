@@ -22,6 +22,17 @@ module.exports =
             }
         }
 
+		publicInfo (id) {
+			let user = this.repository.findByField('Id', id);
+			let userJson = {
+				"Name": user.Name,
+				"Email": user.Email,
+				"AvatarURL": user.AvatarURL
+			};
+
+			this.HttpContext.response.JSON(userJson);
+		}
+
         // POST: /api/token body payload[{"Email": "...", "Password": "..."}]
         login(loginInfo) {
             let user = this.repository.findByField("Email", loginInfo.Email);
