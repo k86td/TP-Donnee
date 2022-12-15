@@ -11,7 +11,11 @@ module.exports =
                 token.Access_token = makeToken(user.Email);
                 token.UserId = user.Id;
                 token.Username = user.Name;
-                token.avatarGuid = user.avatarGuid;
+                token.AvatarGUID = user.AvatarGUID;
+                token.Verified = false
+                if(user.VerifyCode === "verified"){
+                    token.Verified = true;
+                }
             }
             return token;
         }

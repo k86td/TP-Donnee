@@ -99,6 +99,8 @@
                         <div id='image' class='ImageUploader' defaultImage='images/No_Image.png'
                             waitingImage='images/writing.gif'>
                         </div>
+                        <label for="shared_input">Partager</label>
+                        <input type="checkbox" id="shared_input" class="form-check-input">
                         <div class="note">Cliquez-Déposez une image</div>
                     </form>
                 </div>
@@ -115,6 +117,27 @@
                 </div>
                 <div id="newAccountDlg">
                     <form id="newAccountForm">
+
+                        <label for="name">Nom</label>
+                        <input type="text" id="name" class="form-control" required>
+
+                        <label for="email">Email</label>
+                        <input type="text" id="email" class="form-control" required pattern="\w+@\w+\.\w+" title="Entrer un email valide (email@domaine.tld)"></input>
+
+                        <label for="password">Password</label>
+                        <input type="password" id="password" class="form-control" required></input>
+
+                        <label for="password_confirmation">Confirmation</label>
+                        <input type="password" id="password_confirmation" class="form-control" required></input>
+
+                        <label for="imageAvatar">Image</label>
+                        <div id='imageAvatar' class='ImageUploader' defaultImage='images/No_Image.png' waitingImage='images/writing.gif'>
+                        </div>
+                        <div class="note">Cliquez-Déposez une image</div>
+                    </form>
+                </div>
+                <div id="modifyAccountDlg">
+                    <form id="modifyAccountForm">
 
                         <label for="name">Nom</label>
                         <input type="text" id="name" class="form-control" required>
