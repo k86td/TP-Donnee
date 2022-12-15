@@ -40,32 +40,40 @@ function getImagesList(refresh = true) {
 }
 function refreshimagesList(images, ETag) {
 	function insertIntoImageList(image) {
+		let user = null;
+		uGet(`accounts/${image.UserId}`, (data) => { user = data; }, error);
+		if(image.Shared || image.UserId == getCookie("userId")){
+			$("#imagesList").append(
+				$(` 
+									<div class='imageLayout'>
+										<div class='imageHeader'>
+											<div class="imageTitle">${image.Title}</div>
+											<div    class="cmd editCmd  fa fa-pencil-square" 
+													imageid="${image.Id}" 
+													title="Editer ${image.Title}" 
+													data-toggle="tooltip">
+											</div>
+											<div    class="cmd deleteCmd fa fa-window-close" 
+													imageid="${image.Id}" 
+													title="Effacer ${image.Title}" 
+													data-toggle="tooltip">
+											</div>
+										</div>
+										<a href="${image.OriginalURL}" target="_blank">
+											<div    class='image' 
+													style="background-image:url('${image.ThumbnailURL}')">
+													${image.Shared && image.userId == getCookie("userId") ? 
+													`<div id="sharedIcon" class="avatar" style="background-image:url('../images/shared.png')">`
+													:
+													`<div id="avatarOnImage" title="${user.Name}" class="avatar" style="background-image:url('${image.UserId}')"></div>`}
+											</div>
 
-		$("#imagesList").append(
-			$(` 
-                                <div class='imageLayout'>
-                                    <div class='imageHeader'>
-                                        <div class="imageTitle">${image.Title}</div>
-                                        <div    class="cmd editCmd  fa fa-pencil-square" 
-                                                imageid="${image.Id}" 
-                                                title="Editer ${image.Title}" 
-                                                data-toggle="tooltip">
-                                        </div>
-                                        <div    class="cmd deleteCmd fa fa-window-close" 
-                                                imageid="${image.Id}" 
-                                                title="Effacer ${image.Title}" 
-                                                data-toggle="tooltip">
-                                        </div>
-                                    </div>
-                                    <a href="${image.OriginalURL}" target="_blank">
-                                        <div    class='image' 
-                                                style="background-image:url('${image.ThumbnailURL}')">
-                                        </div>
-                                    </a>
-                                    <div class="imageDate">${convertToFrenchDate(parseInt(image.Date))}</div>
-                                </div>
-                        `)
-		);
+										</a>
+										<div class="imageDate">${convertToFrenchDate(parseInt(image.Date))}</div>
+									</div>
+							`)
+			);
+		}
 	}
 	currentETag = ETag;
 	previousScrollPosition = $(".scrollContainer").scrollTop();
@@ -181,7 +189,10 @@ function imageFromForm() {
 			Title: $("#title_input").val(),
 			Description: $("#description_input").val(),
 			ImageData: ImageUploader.getImageData('image'),
-			Date: parseInt($("#date_input").val())
+			Date: parseInt($("#date_input").val()),
+			Shared : $("#shared_input").is(":checked"),
+			UserId : getCookie("userId")
+
 		};
 		return image;
 	} else {
@@ -228,6 +239,7 @@ function accountToForm(previousInfo = undefined) {
 		$("#password_confirmation").val("");
 		ImageUploader.resetImage('imageAvatar');
 	}
+
 }
 
 const _passwordMismatchErrorMessage = "La confirmation du mot de passe n'est pas identitque au mot de passe";
@@ -385,6 +397,38 @@ function init_UI() {
 		buttons: [{
 			id: "newUserDlgOkBtn",
 			text: "S'inscrire",
+			click: function() {
+				if (document.getElementById("newAccountForm").reportValidity()) {
+					let formData = accountFromForm();
+					console.debug(formData);
+					uPost("/Accounts/register", formData, (data) => loginDlg({ 'email' : data.Email }), error);
+					$(this).dialog('close');
+				}
+			}
+		},
+		{
+			text: "Annuler",
+			click: function() {
+				$(this).dialog("close");
+			}
+		}]
+	});
+
+	$("#modifyAccounttDlg").dialog({
+		title: "...",
+		autoOpen: false,
+		modal: true,
+		show: { effect: 'fade', speed: 400 },
+		hide: { effect: 'fade', speed: 400 },
+		width: 700,
+		minWidth: 640,
+		maxWidth: 700,
+		height: 800,
+		minHeight: 640,
+		maxHeight: 800,
+		buttons: [{
+			id: "modifiyUserDlgOkBtn",
+			text: "Modifire mon compte",
 			click: function() {
 				if (document.getElementById("newAccountForm").reportValidity()) {
 					let formData = accountFromForm();

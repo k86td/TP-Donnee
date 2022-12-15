@@ -12,10 +12,10 @@ module.exports =
                 token.UserId = user.Id;
                 token.Username = user.Name;
                 token.AvatarGUID = user.AvatarGUID;
-				token.Verified = false;
-				if (user.VerifyCode === "verified") {
-					token.Verified = true;
-				}
+                token.Verified = false
+                if(user.VerifyCode === "verified"){
+                    token.Verified = true;
+                }
             }
             return token;
         }
