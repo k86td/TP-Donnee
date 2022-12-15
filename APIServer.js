@@ -27,6 +27,7 @@ module.exports =
             const RouteRegister = require('./routeRegister');
             RouteRegister.add('GET', 'accounts');
             RouteRegister.add('POST', 'accounts', 'register');
+            RouteRegister.add('POST', 'accounts', 'login');
             RouteRegister.add('GET', 'accounts', 'verify');
             RouteRegister.add('GET', 'accounts', 'logout');
             RouteRegister.add('PUT', 'accounts', 'modify');
