@@ -22,6 +22,14 @@ module.exports =
             }
         }
 
+		get (id) {
+			if (this.HttpContext.path.action == 'publicinfo') {
+				return this.publicInfo(id);
+			}
+
+			return super.get(id);
+		}
+
 		publicInfo (id) {
 			let user = this.repository.findByField('Id', id);
 			let userJson = {
