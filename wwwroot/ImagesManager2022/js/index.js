@@ -297,16 +297,17 @@ function loginHandler () {
 		let email = $("#emailLogin").val();
 		let password = $("#passwordLogin").val();
 
-		uPost('/token', { "Email" : email, "Password" : password },(token) => {
-			if(token.Verified !== "verified"){
-				userIdToVerify = token.UserId;
-				uPost('/accounts/logout', { UserId : token.UserId});
+		uPost('/accounts/login', { "Email" : email, "Password" : password }, data => {
+			if(data.Verified !== "verified"){
+				renderConnectivityStatus(false);
 				verifyCodeDlg();
 			}
-		});
-		uPost('/accounts/login', { "Email" : email, "Password" : password }, data => {
-			$('#accountLoginDlg').dialog('close');
-			document.cookie = `access_token=${data.Access_token}`;
+			else{
+				$('#accountLoginDlg').dialog('close');
+				document.cookie = `access_token=${data.Access_token}`;
+				userIdToVerify = data.UserId;
+			}
+
 			renderConnectivityStatus(true);
 		}, renderConnectivityStatus(false));
 	}
