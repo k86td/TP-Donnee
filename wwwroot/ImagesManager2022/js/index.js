@@ -244,12 +244,60 @@ function setPasswordConfirmationFor (password, confirmation) {
 	conf.onkeyup = passwordConfirmationHandler;
 }
 
+async function renderConnectivityStatus (isConnected = undefined) {
+	// this function will re-render connectionMgmt depending if the user is logged in or not
+	// if isConnected is undefined, we will need to figure out if user is logged in
+	// if true/false, render based on value
+
+	if (isConnected == undefined) {  
+		// check if cookie is set, then test if its expired. set isConnected based on result
+		let cookies = document.cookie;
+		if (cookies.includes("access_token")) {
+			let cookie = cookies
+				.split('; ') // get cookie in array
+				.filter(c => { // filter the cookies
+				return c.includes("access_token");
+			})
+				.map(c => {
+				return c.split('=')[1]; // get only the value of the token
+			})[0]; // get the first cookie (access_token)
+
+			// test the cookie
+			try {
+				await pGet("/accounts", cookie, _ => {
+					isConnected = true;
+				}, _ => {
+					isConnected = false;
+				});
+			} catch {
+				console.error("Not authenticated... Removing token");
+			}
+		}
+		else
+			isConnected = false;
+	}
+
+	if (isConnected) {
+		$("#connexionMgmt").hide();
+	} else {
+		// if not connected, make sure we don't have a token stored!
+		document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+		$("#connexionMgmt").show();
+	}
+}
+
 function loginHandler () {
+	// set the token when the user logs-in
+
 	if (document.getElementById('accountLoginForm').reportValidity()) {
 		let email = $("#emailLogin").val();
 		let password = $("#passwordLogin").val();
 
-		uPost('/token', { "Email" : email, "Password" : password });
+		uPost('/accounts/login', { "Email" : email, "Password" : password }, data => {
+			$('#accountLoginDlg').dialog('close');
+			document.cookie = `access_token=${data.Access_token}`;
+			renderConnectivityStatus(true);
+		}, renderConnectivityStatus(false));
 	}
 }
 
@@ -257,6 +305,7 @@ function loginHandler () {
 
 function init_UI() {
 	setPasswordConfirmationFor('password', 'password_confirmation');
+	renderConnectivityStatus();
 
 	$("#newImageCmd").click(newImage);
 	$("#newAccountCmd").click(newAccount);
@@ -280,39 +329,9 @@ function init_UI() {
 			click: function() {
 				if (document.getElementById("newAccountForm").reportValidity()) {
 					let formData = accountFromForm();
+					console.debug(formData);
 					uPost("/Accounts/register", formData, () => "", error);
-
 					$(this).dialog('close');
-				}
-			}
-		},
-		{
-			text: "Annuler",
-			click: function() {
-				$(this).dialog("close");
-			}
-		}]
-	});
-
-	$("#verifyCodeDlg").dialog({
-		title: "...",
-		autoOpen: false,
-		modal: true,
-		show: { effect: 'fade', speed: 400 },
-		hide: { effect: 'fade', speed: 400 },
-		width: 500,
-		height: 350,
-		buttons: [{
-			id: "verifyCodeDlgOkBtn",
-			text: "Valider",
-			click: function() {
-				if (document.getElementById("verifyCodeForm").reportValidity()) {
-					let formData = {
-						"Id": $("#id").val(),
-						"Code": $("#code").val()
-					};
-					uGet("/Accounts/verify", formData, () => "", error);
-
 				}
 			}
 		},

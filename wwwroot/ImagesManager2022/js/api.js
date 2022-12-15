@@ -62,9 +62,8 @@ function DELETE(id, successCallBack, errorCallBack) {
  * @param {Function} successCallBack 
  * @param {Function} errorCallBack 
  */
-function uPost(endpoint, data, successCallBack, errorCallBack) {
-	console.debug(`Accessing ${endpoint} with ${JSON.stringify(data)}`);
-    $.ajax({
+async function uPost(endpoint, data, successCallBack, errorCallBack) {
+    await $.ajax({
         url: baseUrl + endpoint,
         type: 'POST',
         contentType: 'application/json',
@@ -74,6 +73,26 @@ function uPost(endpoint, data, successCallBack, errorCallBack) {
     });
 }
 
+async function uGet(endpoint, successCallBack, errorCallBack) {
+    await $.ajax({
+        url: baseUrl + endpoint,
+        type: 'GET',
+        success: (data) => { successCallBack(data) },
+        error: function (jqXHR) { errorCallBack(jqXHR.status) }
+    });
+}
+
+async function pGet(endpoint, token, successCallBack, errorCallBack) {
+    return $.ajax({
+        url: baseUrl + endpoint,
+        type: 'GET',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader("Authorization", "Bearer " + token);
+		},
+        success: (data) => successCallBack(data),
+        error: (jqXHR) => errorCallBack(jqXHR.status)
+    });
+}
 
 function storeToken (token) {
     localStorage.setItem("access-token", token);
