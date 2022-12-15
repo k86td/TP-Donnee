@@ -13,8 +13,10 @@ body {
 }
 
 .headerPanel {
+	width: 100%;
     display: flex;
     flex-wrap: wrap;
+	flex-direction: column;
     background-image: linear-gradient(180deg, lightgray, gray);
     align-items: center;
 }
@@ -184,6 +186,7 @@ textarea2 {
     font-weight: bold;
     color: blue;
     text-align: center;
+	margin: 3px;
 }
 .cmd:hover {
     color: rgb(2, 166, 221);
@@ -233,3 +236,19 @@ div2,
 span2 {
     border: 1px solid red;
 }
+
+#connexionMgmt {
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: 50px;
+	grid-column-gap: 0px;
+	grid-row-gap: 0px;
+}
+
+#newAccountCmd { grid-area: 1 / 1 / 2 / 2; }
+
+#loginAccountCmd { grid-area: 1 / 3 / 2 / 4; }
+#logoutAccountCmd { grid-area: 1 / 3 / 2 / 4; }
+
+
