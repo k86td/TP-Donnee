@@ -307,6 +307,19 @@ async function renderConnectivityStatus (isConnected = undefined) {
 	}
 }
 
+function codeVerification(userId){
+	if (document.getElementById("verifyCodeForm").reportValidity()) {
+		let code =  $("#code").val()
+		uGet("/accounts/verify?id="+ userId + "&code=" + code, (data) => {
+			$('#verifyCodeDlg').dialog('close');
+		},
+		(error) => {
+			$("#verifyErrorMessage").html("Le code que vous avez entré n'est pas valide. Veuillez réessayer.");
+			console.log(error);
+		});
+	}
+}
+
 function loginHandler () {
 	// set the token when the user logs-in
 
@@ -375,6 +388,32 @@ function init_UI() {
 					uPost("/Accounts/register", formData, () => "", error);
 					$(this).dialog('close');
 				}
+			}
+		},
+		{
+			text: "Annuler",
+			click: function() {
+				$(this).dialog("close");
+			}
+		}]
+	});
+
+	$("#verifyCodeDlg").dialog({
+		title: "Code de vérification",
+		autoOpen: false,
+		modal: true,
+		show: { effect: 'fade', speed: 400 },
+		hide: { effect: 'fade', speed: 400 },
+		minWidth: 300,
+		maxWidth: 400,
+		height: 300,
+		minHeight: 250,
+		maxHeight: 350,
+		buttons: [{
+			id: "verifyCodeDlgOkBtn",
+			text: "Valider",
+			click: function() {
+				codeVerification(userIdToVerify);
 			}
 		},
 		{
