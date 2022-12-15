@@ -332,7 +332,7 @@ function loginHandler () {
 			$('#accountLoginDlg').dialog('close');
 			document.cookie = `access_token=${data.Access_token}; expires=${new Date(data.Expire_Time * 1000).toUTCString()}`;
 			document.cookie = `userId=${data.UserId}`;
-			if(data.Verified !== "verified"){
+			if(data.Verified != true){
 				userIdToVerify = data.UserId;
 				renderConnectivityStatus(false);
 				verifyCodeDlg();
@@ -341,6 +341,8 @@ function loginHandler () {
 				$('#accountLoginDlg').dialog('close');
 				document.cookie = `access_token=${data.Access_token}`;
 				renderConnectivityStatus(true);
+				$("#avatarImage").attr("src", "../../images/" + data.AvatarGUID + ".png");
+				$("#accountName").html(data.Username);
 			}
 		}, renderConnectivityStatus(false));
 	}
