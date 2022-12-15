@@ -11,6 +11,7 @@ let imagesCount = 50;
 let appendCount = 3;
 let previousScrollPosition = 0;
 let appendMode = false;
+let userIdToVerify = 0; // used by confirmVerifyDlg
 
 init_UI();
 HEAD(checkETag, error);
@@ -123,11 +124,14 @@ function newAccount() {
 	$("#newAccountDlg").dialog('open');
 }
 
+
 function loginDlg () {
 	$('#emailLogin').val('');
 	$('#passwordLogin').val('');
 	$('#accountLoginDlg').dialog('open');
 }
+
+
 
 function newImage() {
 	holdCheckETag = true;
@@ -248,10 +252,33 @@ function loginHandler () {
 		let email = $("#emailLogin").val();
 		let password = $("#passwordLogin").val();
 
-		uPost('/token', { "Email" : email, "Password" : password });
+		uPost('/token', { "Email" : email, "Password" : password },(token) => {
+			if(token.Verified !== "verified"){
+				userIdToVerify = token.UserId;
+				uPost('/accounts/logout', { UserId : token.UserId});
+				verifyCodeDlg();
+			}
+		});
 	}
 }
 
+function codeVerification(userId){
+	if (document.getElementById("verifyCodeForm").reportValidity()) {
+		let code =  $("#code").val()
+		uGet("/accounts/verify?id="+ userId + "&code=" + code, (data) => {
+			$('#verifyCodeDlg').dialog('close');
+		},
+		(error) => {
+			$("#verifyErrorMessage").html("Le code que vous avez entré n'est pas valide. Veuillez réessayer.");
+			console.log(error);
+		});
+	}
+}
+
+function verifyCodeDlg(){
+	$("#code").val('');
+	$("#verifyCodeDlg").dialog('open');
+}
 
 
 function init_UI() {
@@ -279,8 +306,7 @@ function init_UI() {
 			click: function() {
 				if (document.getElementById("newAccountForm").reportValidity()) {
 					let formData = accountFromForm();
-					uPost("/Accounts/register", formData, () => "", error);
-
+					uPost("/Accounts/register", formData, (data) => userIdToVerify = data.Id, error);
 					$(this).dialog('close');
 				}
 			}
@@ -294,25 +320,21 @@ function init_UI() {
 	});
 
 	$("#verifyCodeDlg").dialog({
-		title: "...",
+		title: "Code de vérification",
 		autoOpen: false,
 		modal: true,
 		show: { effect: 'fade', speed: 400 },
 		hide: { effect: 'fade', speed: 400 },
-		width: 500,
-		height: 350,
+		minWidth: 300,
+		maxWidth: 400,
+		height: 300,
+		minHeight: 250,
+		maxHeight: 350,
 		buttons: [{
 			id: "verifyCodeDlgOkBtn",
 			text: "Valider",
 			click: function() {
-				if (document.getElementById("verifyCodeForm").reportValidity()) {
-					let formData = {
-						"Id": $("#id").val(),
-						"Code": $("#code").val()
-					};
-					uGet("/Accounts/verify", formData, () => "", error);
-
-				}
+				codeVerification(userIdToVerify);
 			}
 		},
 		{
@@ -336,6 +358,7 @@ function init_UI() {
 			text: "Connexion",
 			click: function() {
 				loginHandler();
+				$("#loginAccountDlg").dialog('close');
 			}
 		},
 		{

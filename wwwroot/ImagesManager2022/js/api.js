@@ -74,6 +74,15 @@ function uPost(endpoint, data, successCallBack, errorCallBack) {
     });
 }
 
+function uGet(endpoint, successCallBack, errorCallBack) {
+    $.ajax({
+        url: "http://localhost:5000" + endpoint,
+        type: 'GET',
+        success: (data) => { successCallBack(data) },
+        error: function (jqXHR) { errorCallBack(jqXHR.status) }
+    });
+}
+
 
 function storeToken (token) {
     localStorage.setItem("access-token", token);

@@ -11,6 +11,7 @@ module.exports =
                 token.Access_token = makeToken(user.Email);
                 token.UserId = user.Id;
                 token.Username = user.Name;
+                token.Verified = user.VerifyCode;
             }
             return token;
         }
