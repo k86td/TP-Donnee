@@ -332,6 +332,11 @@ function loginHandler () {
 	}
 }
 
+function verifyCodeDlg(){
+	$("#code").val('');
+	$("#verifyCodeDlg").dialog('open');
+}
+
 function logout () {
 	console.debug(`Login out userId ${userIdToVerify}`);
 	const _callback = () => renderConnectivityStatus(false);
