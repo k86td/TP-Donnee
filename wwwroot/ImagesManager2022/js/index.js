@@ -332,14 +332,15 @@ function loginHandler () {
 			document.cookie = `access_token=${data.Access_token}; expires=${new Date(data.Expire_Time * 1000).toUTCString()}`;
 			document.cookie = `userId=${data.UserId}`;
 			if(data.Verified !== "verified"){
+				userIdToVerify = data.UserId;
 				renderConnectivityStatus(false);
 				verifyCodeDlg();
 			}
 			else{
 				$('#accountLoginDlg').dialog('close');
-				userIdToVerify = data.UserId;
+				document.cookie = `access_token=${data.Access_token}`;
+				renderConnectivityStatus(true);
 			}
-			renderConnectivityStatus(true);
 		}, renderConnectivityStatus(false));
 	}
 }
