@@ -60,11 +60,18 @@
                         data-toggle="tooltip"></span>
                     </div>
 					<div id="connexionMgmt">
-						<span class="cmd fa-solid fa-user-plus" id="newAccountCmd" title="Créer un compte"
-							data-toggle="tooltip"></span>
+						<div id="notLoggedIn">
+							<span class="cmd fa-solid fa-user-plus" id="newAccountCmd" title="Créer un compte"
+								data-toggle="tooltip"></span>
 
-						<span class="cmd fa-solid fa-right-to-bracket" id="loginAccountCmd" title="Connexion"
-							data-toggle="tooltip"></span>
+							<span class="cmd fa-solid fa-right-to-bracket" id="loginAccountCmd" title="Connexion"
+								data-toggle="tooltip"></span>
+						</div>
+						<div id ="loggedIn">
+							<span class="cmd fa-solid fa-right-from-bracket" id="logoutAccountCmd" title="Déconnexion"
+								data-toggle="tooltip"></span>
+
+						</div>
 					</div>
 
             </div>
@@ -132,6 +139,7 @@
                         <label for="code">Vérifiez vos courriels pour trouver le code de vérification qui vous a été envoyé.</label>
                         <input type="text" id="code" class="form-control" required>
                         <div id="verifyErrorMessage" class="note"></div>
+
                     </form>
                 </div>
                 <div id="confirmDeleteDlg">
