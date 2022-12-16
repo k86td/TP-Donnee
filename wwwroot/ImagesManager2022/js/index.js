@@ -41,7 +41,7 @@ function getImagesList(refresh = true) {
 function refreshimagesList(images, ETag) {
 	function insertIntoImageList(image) {
 		let user = null;
-		uGet(`accounts/${image.UserId}`, (data) => { user = data; }, error);
+		// uGet(`/accounts/publicInfo/${image.UserId}`, (data) => { user = data; }, error);
 		if(image.Shared || image.UserId == getCookie("userId")){
 			$("#imagesList").append(
 				$(` 
@@ -272,7 +272,8 @@ function unsetCookie (cookieName) {
 }
 
 function getCookie (cookieName) {
-	return document.cookie.split('; ').filter(c => c.split('=')[0] == cookieName)[0].split('=')[1];
+	if (document.cookie.includes(cookieName))
+		return document.cookie.split('; ').filter(c => c.split('=')[0] == cookieName)[0].split('=')[1];
 }
 
 async function renderConnectivityStatus (isConnected = undefined) {
@@ -299,8 +300,6 @@ async function renderConnectivityStatus (isConnected = undefined) {
 				await pGet("/accounts/" + getCookie('userId'), cookie, data => {
 					isConnected = true;
 					userInfo = data;
-
-					console.debug(`Hello, ${JSON.stringify(data)}`);
 				}, _ => {
 					isConnected = false;
 				});
@@ -312,10 +311,12 @@ async function renderConnectivityStatus (isConnected = undefined) {
 			isConnected = false;
 	}
 
+	console.debug(`UserInfo : ${JSON.stringify(userInfo)}`);
+
 	if (isConnected) {
 		$(".notLoggedIn").hide();
 		$(".loggedIn").show();
-		$("#avatarImage").attr("src", "../../images/" + userInfo.AvatarGUID + ".png");
+		$("#avatarImage").attr("src", userInfo.AvatarURL);
 		$("#accountName").html(userInfo.Name);
 	} else {
 		// if not connected, make sure we don't have a token stored!
