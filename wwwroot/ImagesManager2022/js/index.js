@@ -287,7 +287,7 @@ async function renderConnectivityStatus (isConnected = undefined) {
 	// if true/false, render based on value
 
 	let userInfo;
-	if (isConnected == undefined) {  
+	if (isConnected == undefined) {
 		// check if cookie is set, then test if its expired. set isConnected based on result
 		let cookies = document.cookie;
 		if (cookies.includes("access_token")) {
@@ -316,9 +316,10 @@ async function renderConnectivityStatus (isConnected = undefined) {
 			isConnected = false;
 	}
 
-	console.debug(`UserInfo : ${JSON.stringify(userInfo)}`);
-
 	if (isConnected) {
+		await pGet("/accounts/" + getCookie('userId'), getCookie('access_token'), data => {
+			userInfo = data;
+		}, _ => {});
 		$(".notLoggedIn").hide();
 		$(".loggedIn").show();
 		$("#avatarImage").attr("src", userInfo.AvatarURL);
@@ -330,6 +331,8 @@ async function renderConnectivityStatus (isConnected = undefined) {
 		$(".notLoggedIn").show();
 		$(".loggedIn").hide();
 	}
+
+	console.debug(`UserInfo : ${JSON.stringify(userInfo)}`);
 }
 
 function codeVerification(userId){
