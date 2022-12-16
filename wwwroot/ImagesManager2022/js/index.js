@@ -526,7 +526,7 @@ function init_UI() {
 				let image = imageFromForm();
 				if (image) {
 					if (createMode) {
-						pPost("/images",image,getCookie('access_token'), getImagesList, error);
+						pPost("/images",image, getCookie('access_token'), getImagesList, error);
 						$(".scrollContainer").scrollTop(0);
 					}
 					else
@@ -561,7 +561,8 @@ function init_UI() {
 			click: function() {
 				holdCheckETag = false;
 				if (imageIdToDelete)
-					DELETE(imageIdToDelete, getImagesList, error);
+					var callback = () => {getImagesList();}
+					pDelete("/images/" + imageIdToDelete, getCookie('access_token'), callback, error);
 				imageIdToDelete = 0;
 				$(this).dialog("close");
 			}

@@ -108,6 +108,18 @@ async function pGet(endpoint, token, successCallBack, errorCallBack) {
     });
 }
 
+async function pDelete(endpoint, token, successCallBack, errorCallBack) {
+    return $.ajax({
+        url: baseUrl + endpoint,
+        type: 'DELETE',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader("Authorization", "Bearer " + token);
+		},
+        success: (data) => successCallBack(data),
+        error: (jqXHR) => errorCallBack(jqXHR.status)
+    });
+}
+
 function storeToken (token) {
     localStorage.setItem("access-token", token);
 }
