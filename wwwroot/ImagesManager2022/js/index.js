@@ -362,14 +362,15 @@ function codeVerification(userId){
 		let code =  $("#code").val()
 		uGet("/accounts/verify?id="+ userId + "&code=" + code, (data) => {
 			$('#verifyCodeDlg').dialog('close');
+			renderConnectivityStatus();
 		},
 		(error) => {
 			$("#verifyErrorMessage").html("Le code que vous avez entré n'est pas valide. Veuillez réessayer.");
 			console.log(error);
+			renderConnectivityStatus(false);
 		});
 	}
 
-	renderConnectivityStatus();
 }
 
 function loginHandler () {
@@ -527,6 +528,37 @@ function init_UI() {
 			text: "Annuler",
 			click: function() {
 				$(this).dialog("close");
+			}
+		},
+		{
+			text: "Supprimer mon compte",
+			click: function() {
+				$("#confirmAccountDeleteDlg").dialog('open');
+			}
+		}]
+	});
+
+	$("#confirmAccountDeleteDlg").dialog({
+		title: "Confirmation",
+		width: 700,
+		height: 200,
+		autoOpen: false,
+		modal: true,
+		show: { effect: 'fade', speed: 400 },
+		hide: { effect: 'fade', speed: 400 },
+		buttons: [{
+			id: "confirmDeleteAccountBtn",
+			text: "Oui",
+			click: function() {
+				pGet('/accounts/remove/' + getCookie('userId'), getCookie('access_token'), renderConnectivityStatus(false), renderConnectivityStatus(false));
+				$("#confirmAccountDeleteDlg").dialog('close');
+				$("#editAccountDlg").dialog('close');
+			}
+		}, {
+			id: "cancelDeleteAccountBtn",
+			text: "Non",
+			click: function () {
+				$("#confirmAccountDeleteDlg").dialog('close');
 			}
 		}]
 	});
