@@ -136,6 +136,12 @@ function newAccount() {
 }
 
 function loginDlg (options = undefined) {
+	let _knowEmail = localStorage.getItem('userEmail');
+	if (_knowEmail) {
+		$("#passwordRememberMe").prop('checked', true);
+		options['email'] = _knowEmail;
+	}
+
 	$('#emailLogin').val('email' in options ? options.email : '');
 	$('#passwordLogin').val('');
 	$('#accountLoginDlg').dialog('open');
@@ -368,6 +374,7 @@ function loginHandler () {
 	// set the token when the user logs-in
 
 	if (document.getElementById('accountLoginForm').reportValidity()) {
+
 		let email = $("#emailLogin").val();
 		let password = $("#passwordLogin").val();
 
@@ -375,7 +382,7 @@ function loginHandler () {
 			$('#accountLoginDlg').dialog('close');
 			document.cookie = `access_token=${data.Access_token}; expires=${new Date(data.Expire_Time * 1000).toUTCString()}`;
 			document.cookie = `userId=${data.UserId}`;
-			if(data.Verified != true){
+			if(!data.Verified){
 				userIdToVerify = data.UserId;
 				verifyCodeDlg();
 			}
@@ -385,6 +392,11 @@ function loginHandler () {
 				renderConnectivityStatus(true);
 				getImagesList()
 			}
+
+			if ($("#passwordRememberMe").prop('checked'))
+				localStorage.setItem('userEmail', email);
+			else
+				localStorage.removeItem('userEmail');
 		}, renderConnectivityStatus(false));
 	}
 }
