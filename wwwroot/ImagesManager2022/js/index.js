@@ -68,12 +68,12 @@ function refreshimagesList(images, ETag) {
                     );
 		*/
 		//uGet(`/accounts/publicInfo/${image.UserId}`, (data) => { user = data; }, error);
-
-		if(image.Shared){
+		let connectedUserId = getCookie("userId");
+		if(image.Shared || image.UserId == connectedUserId){
 			$("#imagesList").append(
 				$(` 
 					<div class='imageLayout'>
-						${image.UserId == 1 ? `
+						${image.UserId == connectedUserId && connectedUserId != undefined ? `
 						<div class='imageHeader'>
 							<div class="imageTitle">${image.Title}</div>
 							<div    class="cmd editCmd  fa fa-pencil-square" 
@@ -91,13 +91,12 @@ function refreshimagesList(images, ETag) {
 						<a href="${image.OriginalURL}" target="_blank">
 							<div    class='image' 
 									style="background-image:url('${image.ThumbnailURL}')">
-									${image.Shared && image.userId == 1 ? 
-									`<div id="sharedIcon" class="avatar" style="background-image:url('../images/shared.png');">`
-									:
-									`<div id="avatarOnImage" title="name" class="avatar" style="background-image:url('../../images/c5482a50-7cb1-11ed-92fe-2b03d4156d66.png;')"></div>`}
 							</div>
-
 						</a>
+						${image.Shared && image.userId == 1 ? 
+							`<div id="sharedIcon" class="avatar" style="background-image:url('../images/shared.png');">`
+							:
+							`<div id="avatarOnImage" title="name" class="avatar" style="background-image:url('../../images/c5482a50-7cb1-11ed-92fe-2b03d4156d66.png';)"></div>`}
 						<div class="imageDate">${convertToFrenchDate(parseInt(image.Date))}</div>
 					</div>
 			`)
@@ -301,6 +300,9 @@ function unsetCookie (cookieName) {
 }
 
 function getCookie (cookieName) {
+	if(!document.cookie.includes(cookieName)){
+		return undefined;
+	}
 	return document.cookie.split('; ').filter(c => c.split('=')[0] == cookieName)[0].split('=')[1];
 }
 
@@ -388,6 +390,7 @@ function loginHandler () {
 				$('#accountLoginDlg').dialog('close');
 				document.cookie = `access_token=${data.Access_token}`;
 				renderConnectivityStatus(true);
+				getImagesList()
 			}
 		}, renderConnectivityStatus(false));
 	}
@@ -402,6 +405,7 @@ function logout () {
 	console.debug(`Login out userId ${userIdToVerify}`);
 	const _callback = () => renderConnectivityStatus(false);
 	pGet('/accounts/logout/' + getCookie('userId'), getCookie('access_token'), _callback, _callback);
+	getImagesList()
 }
 
 
