@@ -142,6 +142,8 @@ function loginDlg (options = undefined) {
 		options['email'] = _knowEmail;
 	}
 
+	$("#loginFormError").html("");
+
 	$('#emailLogin').val('email' in options ? options.email : '');
 	$('#passwordLogin').val('');
 	$('#accountLoginDlg').dialog('open');
@@ -397,7 +399,11 @@ function loginHandler () {
 				localStorage.setItem('userEmail', email);
 			else
 				localStorage.removeItem('userEmail');
-		}, renderConnectivityStatus(false));
+		}, () => {
+			renderConnectivityStatus(false);
+			$("#loginFormError").html("Connexion impossible! Votre mot de passe ou email est invalide...");
+
+		});
 	}
 }
 
