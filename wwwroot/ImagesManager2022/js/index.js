@@ -40,38 +40,67 @@ function getImagesList(refresh = true) {
 }
 function refreshimagesList(images, ETag) {
 	function insertIntoImageList(image) {
-		let user = null;
-		// uGet(`/accounts/publicInfo/${image.UserId}`, (data) => { user = data; }, error);
-		if(image.Shared || image.UserId == getCookie("userId")){
+		/*
+		$("#imagesList").append(
+                        $(` 
+							<div class='imageLayout'>
+								<div class='imageHeader'>
+									<div class="imageTitle">${image.Title}</div>
+									<div    class="cmd editCmd  fa fa-pencil-square" 
+											imageid="${image.Id}" 
+											title="Editer ${image.Title}" 
+											data-toggle="tooltip">
+									</div>
+									<div    class="cmd deleteCmd fa fa-window-close" 
+											imageid="${image.Id}" 
+											title="Effacer ${image.Title}" 
+											data-toggle="tooltip">
+									</div>
+								</div>
+								<a href="${image.OriginalURL}" target="_blank">
+									<div    class='image' 
+											style="background-image:url('${image.ThumbnailURL}')">
+									</div>
+								</a>
+								<div class="imageDate">${convertToFrenchDate(parseInt(image.Date))}</div>
+							</div>
+                        `)
+                    );
+		*/
+		//uGet(`/accounts/publicInfo/${image.UserId}`, (data) => { user = data; }, error);
+
+		if(image.Shared){
 			$("#imagesList").append(
 				$(` 
-									<div class='imageLayout'>
-										<div class='imageHeader'>
-											<div class="imageTitle">${image.Title}</div>
-											<div    class="cmd editCmd  fa fa-pencil-square" 
-													imageid="${image.Id}" 
-													title="Editer ${image.Title}" 
-													data-toggle="tooltip">
-											</div>
-											<div    class="cmd deleteCmd fa fa-window-close" 
-													imageid="${image.Id}" 
-													title="Effacer ${image.Title}" 
-													data-toggle="tooltip">
-											</div>
-										</div>
-										<a href="${image.OriginalURL}" target="_blank">
-											<div    class='image' 
-													style="background-image:url('${image.ThumbnailURL}')">
-													${image.Shared && image.userId == getCookie("userId") ? 
-													`<div id="sharedIcon" class="avatar" style="background-image:url('../images/shared.png')">`
-													:
-													`<div id="avatarOnImage" title="${user.Name}" class="avatar" style="background-image:url('${image.UserId}')"></div>`}
-											</div>
+					<div class='imageLayout'>
+						${image.UserId == 1 ? `
+						<div class='imageHeader'>
+							<div class="imageTitle">${image.Title}</div>
+							<div    class="cmd editCmd  fa fa-pencil-square" 
+									imageid="${image.Id}" 
+									title="Editer ${image.Title}" 
+									data-toggle="tooltip">
+							</div>
+							<div    class="cmd deleteCmd fa fa-window-close" 
+									imageid="${image.Id}" 
+									title="Effacer ${image.Title}" 
+									data-toggle="tooltip">
+							</div>
+						</div>
+						` : ""}
+						<a href="${image.OriginalURL}" target="_blank">
+							<div    class='image' 
+									style="background-image:url('${image.ThumbnailURL}')">
+									${image.Shared && image.userId == 1 ? 
+									`<div id="sharedIcon" class="avatar" style="background-image:url('../images/shared.png');">`
+									:
+									`<div id="avatarOnImage" title="name" class="avatar" style="background-image:url('../../images/c5482a50-7cb1-11ed-92fe-2b03d4156d66.png;')"></div>`}
+							</div>
 
-										</a>
-										<div class="imageDate">${convertToFrenchDate(parseInt(image.Date))}</div>
-									</div>
-							`)
+						</a>
+						<div class="imageDate">${convertToFrenchDate(parseInt(image.Date))}</div>
+					</div>
+			`)
 			);
 		}
 	}
