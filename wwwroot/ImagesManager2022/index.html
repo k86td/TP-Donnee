@@ -56,21 +56,20 @@
                             D
                         </span>
                     </div>
-                    <span class="cmd fa fa-plus-square" id="newImageCmd" title="Ajouter un image"
+                    <span class="cmd fa fa-plus-square loggedIn" id="newImageCmd" title="Ajouter un image"
                         data-toggle="tooltip"></span>
                     </div>
 					<div id="connexionMgmt">
 						<span class="cmd fa-solid fa-user-plus notLoggedIn" id="newAccountCmd" title="Créer un compte"
 							data-toggle="tooltip"></span>
 
-							<span class="cmd fa-solid fa-right-to-bracket" id="loginAccountCmd" title="Connexion"
-								data-toggle="tooltip"></span>
-						</div>
-						<div id ="loggedIn">
-							<span class="cmd fa-solid fa-right-from-bracket" id="logoutAccountCmd" title="Déconnexion"
-								data-toggle="tooltip"></span>
-                                <img id="avatarImage" class="avatar">
-                                <span id="accountName" class="userName"></span>
+						<span class="cmd fa-solid fa-right-to-bracket notLoggedIn" id="loginAccountCmd" title="Connexion" data-toggle="tooltip"></span>
+
+						<span class="cmd fa-solid fa-right-from-bracket loggedIn" id="logoutAccountCmd" title="Déconnexion" data-toggle="tooltip"></span>
+
+						<div id="accountCmd" class="cmd loggedIn">
+							<img id="avatarImage" class="avatar loggedIn">
+							<span id="accountName" class="userName loggedIn"></span>
 						</div>
 					</div>
 
