@@ -73,6 +73,20 @@ async function uPost(endpoint, data, successCallBack, errorCallBack) {
     });
 }
 
+async function pPost(endpoint, data, token, successCallBack, errorCallBack) {
+    return $.ajax({
+        url: baseUrl + endpoint,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader("Authorization", "Bearer " + token);
+		},
+        success: (data) => successCallBack(data),
+        error: (jqXHR) => errorCallBack(jqXHR.status)
+    });
+}
+
 async function uGet(endpoint, successCallBack, errorCallBack) {
     await $.ajax({
         url: baseUrl + endpoint,

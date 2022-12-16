@@ -526,7 +526,7 @@ function init_UI() {
 				let image = imageFromForm();
 				if (image) {
 					if (createMode) {
-						POST(image, getImagesList, error);
+						pPost("/images",image,getCookie('access_token'), getImagesList, error);
 						$(".scrollContainer").scrollTop(0);
 					}
 					else
