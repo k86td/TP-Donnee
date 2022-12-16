@@ -205,7 +205,7 @@ function imageFromForm() {
 			ImageData: ImageUploader.getImageData('image'),
 			Date: parseInt($("#date_input").val()),
 			Shared : $("#shared_input").is(":checked"),
-			UserId : getCookie("userId")
+			UserId : parseInt(getCookie("userId"))
 
 		};
 		return image;
