@@ -31,6 +31,9 @@ module.exports =
 		}
 
 		publicInfo (id) {
+			if (isNaN(id))
+				return;
+
 			let user = this.repository.findByField('Id', id);
 			let userJson = {
 				"Name": user.Name,
