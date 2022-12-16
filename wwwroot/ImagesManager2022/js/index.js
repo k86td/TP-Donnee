@@ -63,11 +63,9 @@ function refreshimagesList(images, ETag) {
 									</div>
 							` : ""}
 							</div>
-						<a href="${image.OriginalURL}" target="_blank">
-							<div    class='image' 
-									style="background-image:url('${image.ThumbnailURL}')">
-							</div>
-						</a>
+								<div class="image" imageid="${image.Id}"
+										style="background-image:url('${image.ThumbnailURL}')">
+								</div>
 						${image.Shared && image.userId == 1 ? 
 							`<div id="sharedIcon" class="avatar" style="background-image:url('../images/shared.png');">`
 							:
@@ -95,6 +93,7 @@ function refreshimagesList(images, ETag) {
 	$(".showMore").off();
 	$(".editCmd").click(e => { editimage(e) });
 	$(".deleteCmd").click(e => { deleteimage(e) });
+	$('.image').click(e => { imageDlg(e)});
 
 	$('[data-toggle="tooltip"]').tooltip();
 }
@@ -161,6 +160,10 @@ function editimage(e) {
 	$("#imageDlgOkBtn").text("Modifier");
 	$("#imageDlg").dialog('open');
 }
+
+function imageDlg(e){
+	GET_ID(e.target.getAttribute("imageid"), imageToDlg, error);
+}
 function deleteimage(e) {
 	holdCheckETag = true;
 	imageIdToDelete = e.target.getAttribute("imageid")
@@ -213,6 +216,18 @@ function imageToForm(image) {
 	ImageUploader.setImage('image', image.OriginalURL);
 	$("#shared_input").prop("checked", image.Shared);
 }
+
+function imageToDlg(image) {
+	$("#imageInfoLink").attr("href", image.OriginalURL);
+	$("#imageInfoTitle").text(image.Title);
+	$("#imageInfoDescription").text(image.Description);
+	$("#imageInfoDate").text(convertToFrenchDate(parseInt(image.Date)));
+	$("#imageInfoImage").css("background-image", "url(../../images/"+ image.GUID +".png)");
+	//$("#imageInfoOwnerName").text(user.Name);
+	//$("#imageInfoOwnerAvatar").css("background-image", "url(../../images/"+ user.AvatarGUID +".png)");
+	$("#imageInfoDlg").dialog('open');
+}
+
 function accountFromForm() {
 
 	if ($("#newAccountForm")[0].checkValidity()) {
@@ -577,6 +592,29 @@ function init_UI() {
 		},
 		{
 			text: "Annuler",
+			click: function() {
+				holdCheckETag = false;
+				$(this).dialog("close");
+			}
+		}]
+	});
+
+	$("#imageInfoDlg").dialog({
+		title: "...",
+		autoOpen: false,
+		modal: true,
+		show: { effect: 'fade', speed: 400 },
+		hide: { effect: 'fade', speed: 400 },
+		width: 640,
+		minWidth: 640,
+		maxWidth: 640,
+		height: 780,
+		minHeight: 780,
+		maxHeight: 780,
+		position: { my: "top", at: "top", of: window },
+		buttons: [
+		{
+			text: "Retour",
 			click: function() {
 				holdCheckETag = false;
 				$(this).dialog("close");
