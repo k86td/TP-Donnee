@@ -120,6 +120,20 @@ async function pDelete(endpoint, token, successCallBack, errorCallBack) {
     });
 }
 
+async function pPut(endpoint, data, token, successCallBack, errorCallBack) {
+    return $.ajax({
+        url: baseUrl + endpoint,
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader("Authorization", "Bearer " + token);
+		},
+        success: (data) => successCallBack(data),
+        error: (jqXHR) => errorCallBack(jqXHR.status)
+    });
+}
+
 function storeToken (token) {
     localStorage.setItem("access-token", token);
 }

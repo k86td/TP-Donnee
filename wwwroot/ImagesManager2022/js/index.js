@@ -211,6 +211,7 @@ function imageToForm(image) {
 	$("#title_input").val(image.Title);
 	$("#description_input").val(image.Description);
 	ImageUploader.setImage('image', image.OriginalURL);
+	$("#shared_input").prop("checked", image.Shared);
 }
 function accountFromForm() {
 
@@ -530,7 +531,8 @@ function init_UI() {
 						$(".scrollContainer").scrollTop(0);
 					}
 					else
-						PUT(image, getImagesList, error);
+						var callback = () => {getImagesList();}
+						pPut("/images/" + image.Id, image, getCookie("access_token"), callback, error);
 					resetimageForm();
 					holdCheckETag = false;
 					$(this).dialog("close");
