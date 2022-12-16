@@ -40,12 +40,17 @@ function getImagesList(refresh = true) {
 }
 function refreshimagesList(images, ETag) {
 	function insertIntoImageList(image) {
-		/*
-		$("#imagesList").append(
-                        $(` 
-							<div class='imageLayout'>
-								<div class='imageHeader'>
-									<div class="imageTitle">${image.Title}</div>
+
+		//uGet(`/accounts/publicInfo/${image.UserId}`, (data) => { user = data; }, error);
+		let connectedUserId = getCookie("userId");
+		if(image.Shared || image.UserId == connectedUserId){
+			$("#imagesList").append(
+				$(` 
+					<div class='imageLayout'>
+						<div class='imageHeader'>
+							<div class="imageTitle">${image.Title}</div>
+								${image.UserId == connectedUserId && connectedUserId != undefined ? `
+
 									<div    class="cmd editCmd  fa fa-pencil-square" 
 											imageid="${image.Id}" 
 											title="Editer ${image.Title}" 
@@ -56,38 +61,8 @@ function refreshimagesList(images, ETag) {
 											title="Effacer ${image.Title}" 
 											data-toggle="tooltip">
 									</div>
-								</div>
-								<a href="${image.OriginalURL}" target="_blank">
-									<div    class='image' 
-											style="background-image:url('${image.ThumbnailURL}')">
-									</div>
-								</a>
-								<div class="imageDate">${convertToFrenchDate(parseInt(image.Date))}</div>
+							` : ""}
 							</div>
-                        `)
-                    );
-		*/
-		//uGet(`/accounts/publicInfo/${image.UserId}`, (data) => { user = data; }, error);
-		let connectedUserId = getCookie("userId");
-		if(image.Shared || image.UserId == connectedUserId){
-			$("#imagesList").append(
-				$(` 
-					<div class='imageLayout'>
-						${image.UserId == connectedUserId && connectedUserId != undefined ? `
-						<div class='imageHeader'>
-							<div class="imageTitle">${image.Title}</div>
-							<div    class="cmd editCmd  fa fa-pencil-square" 
-									imageid="${image.Id}" 
-									title="Editer ${image.Title}" 
-									data-toggle="tooltip">
-							</div>
-							<div    class="cmd deleteCmd fa fa-window-close" 
-									imageid="${image.Id}" 
-									title="Effacer ${image.Title}" 
-									data-toggle="tooltip">
-							</div>
-						</div>
-						` : ""}
 						<a href="${image.OriginalURL}" target="_blank">
 							<div    class='image' 
 									style="background-image:url('${image.ThumbnailURL}')">
