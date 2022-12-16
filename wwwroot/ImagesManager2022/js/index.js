@@ -378,9 +378,8 @@ function verifyCodeDlg(){
 
 function logout () {
 	console.debug(`Login out userId ${userIdToVerify}`);
-	const _callback = () => renderConnectivityStatus(false);
+	const _callback = () => {renderConnectivityStatus(false); getImagesList();}
 	pGet('/accounts/logout/' + getCookie('userId'), getCookie('access_token'), _callback, _callback);
-	getImagesList()
 }
 
 
