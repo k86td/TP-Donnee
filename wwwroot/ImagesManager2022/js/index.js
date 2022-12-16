@@ -547,17 +547,17 @@ function init_UI() {
 		show: { effect: 'fade', speed: 400 },
 		hide: { effect: 'fade', speed: 400 },
 		buttons: [{
-			id: "confirmDeleteAccountBtn",
+			id: "confirmDeleteAccountOkBtn",
 			text: "Oui",
-			click: function() {
+			click: function() { // remove the account
 				pGet('/accounts/remove/' + getCookie('userId'), getCookie('access_token'), renderConnectivityStatus(false), renderConnectivityStatus(false));
 				$("#confirmAccountDeleteDlg").dialog('close');
 				$("#editAccountDlg").dialog('close');
 			}
 		}, {
-			id: "cancelDeleteAccountBtn",
+			id: "cancelDeleteAccountCancelBtn",
 			text: "Non",
-			click: function () {
+			click: function () { // cancel the removing of the account
 				$("#confirmAccountDeleteDlg").dialog('close');
 			}
 		}]
