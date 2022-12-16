@@ -360,6 +360,8 @@ function codeVerification(userId){
 			console.log(error);
 		});
 	}
+
+	renderConnectivityStatus();
 }
 
 function loginHandler () {
@@ -375,7 +377,6 @@ function loginHandler () {
 			document.cookie = `userId=${data.UserId}`;
 			if(data.Verified != true){
 				userIdToVerify = data.UserId;
-				renderConnectivityStatus(false);
 				verifyCodeDlg();
 			}
 			else{
@@ -530,6 +531,7 @@ function init_UI() {
 		{
 			text: "Annuler",
 			click: function() {
+				renderConnectivityStatus(false);
 				$(this).dialog("close");
 			}
 		}]
