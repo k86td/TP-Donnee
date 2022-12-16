@@ -40,38 +40,39 @@ function getImagesList(refresh = true) {
 }
 function refreshimagesList(images, ETag) {
 	function insertIntoImageList(image) {
-		let user = null;
-		uGet(`accounts/${image.UserId}`, (data) => { user = data; }, error);
-		if(image.Shared || image.UserId == getCookie("userId")){
+
+		//uGet(`/accounts/publicInfo/${image.UserId}`, (data) => { user = data; }, error);
+		let connectedUserId = getCookie("userId");
+		if(image.Shared || image.UserId == connectedUserId){
 			$("#imagesList").append(
 				$(` 
-									<div class='imageLayout'>
-										<div class='imageHeader'>
-											<div class="imageTitle">${image.Title}</div>
-											<div    class="cmd editCmd  fa fa-pencil-square" 
-													imageid="${image.Id}" 
-													title="Editer ${image.Title}" 
-													data-toggle="tooltip">
-											</div>
-											<div    class="cmd deleteCmd fa fa-window-close" 
-													imageid="${image.Id}" 
-													title="Effacer ${image.Title}" 
-													data-toggle="tooltip">
-											</div>
-										</div>
-										<a href="${image.OriginalURL}" target="_blank">
-											<div    class='image' 
-													style="background-image:url('${image.ThumbnailURL}')">
-													${image.Shared && image.userId == getCookie("userId") ? 
-													`<div id="sharedIcon" class="avatar" style="background-image:url('../images/shared.png')">`
-													:
-													`<div id="avatarOnImage" title="${user.Name}" class="avatar" style="background-image:url('${image.UserId}')"></div>`}
-											</div>
+					<div class='imageLayout'>
+						<div class='imageHeader'>
+							<div class="imageTitle">${image.Title}</div>
+								${image.UserId == connectedUserId && connectedUserId != undefined ? `
 
-										</a>
-										<div class="imageDate">${convertToFrenchDate(parseInt(image.Date))}</div>
+									<div    class="cmd editCmd  fa fa-pencil-square" 
+											imageid="${image.Id}" 
+											title="Editer ${image.Title}" 
+											data-toggle="tooltip">
 									</div>
-							`)
+									<div    class="cmd deleteCmd fa fa-window-close" 
+											imageid="${image.Id}" 
+											title="Effacer ${image.Title}" 
+											data-toggle="tooltip">
+									</div>
+							` : ""}
+							</div>
+								<div class="image" imageid="${image.Id}"
+										style="background-image:url('${image.ThumbnailURL}')">
+								</div>
+						${image.Shared && image.userId == 1 ? 
+							`<div id="sharedIcon" class="avatar" style="background-image:url('../images/shared.png');">`
+							:
+							`<div id="avatarOnImage" title="name" class="avatar" style="background-image:url('../../images/c5482a50-7cb1-11ed-92fe-2b03d4156d66.png';)"></div>`}
+						<div class="imageDate">${convertToFrenchDate(parseInt(image.Date))}</div>
+					</div>
+			`)
 			);
 		}
 	}
@@ -92,6 +93,7 @@ function refreshimagesList(images, ETag) {
 	$(".showMore").off();
 	$(".editCmd").click(e => { editimage(e) });
 	$(".deleteCmd").click(e => { deleteimage(e) });
+	$('.image').click(e => { imageDlg(e)});
 
 	$('[data-toggle="tooltip"]').tooltip();
 }
@@ -134,6 +136,14 @@ function newAccount() {
 }
 
 function loginDlg (options = undefined) {
+	let _knowEmail = localStorage.getItem('userEmail');
+	if (_knowEmail) {
+		$("#passwordRememberMe").prop('checked', true);
+		options['email'] = _knowEmail;
+	}
+
+	$("#loginFormError").html("");
+
 	$('#emailLogin').val('email' in options ? options.email : '');
 	$('#passwordLogin').val('');
 	$('#accountLoginDlg').dialog('open');
@@ -157,6 +167,10 @@ function editimage(e) {
 	$("#imageDlg").dialog('option', 'title', "Modification d'image");
 	$("#imageDlgOkBtn").text("Modifier");
 	$("#imageDlg").dialog('open');
+}
+
+function imageDlg(e){
+	GET_ID(e.target.getAttribute("imageid"), imageToDlg, error);
 }
 function deleteimage(e) {
 	holdCheckETag = true;
@@ -208,7 +222,20 @@ function imageToForm(image) {
 	$("#title_input").val(image.Title);
 	$("#description_input").val(image.Description);
 	ImageUploader.setImage('image', image.OriginalURL);
+	$("#shared_input").prop("checked", image.Shared);
 }
+
+function imageToDlg(image) {
+	$("#imageInfoLink").attr("href", image.OriginalURL);
+	$("#imageInfoTitle").text(image.Title);
+	$("#imageInfoDescription").text(image.Description);
+	$("#imageInfoDate").text(convertToFrenchDate(parseInt(image.Date)));
+	$("#imageInfoImage").css("background-image", "url(../../images/"+ image.GUID +".png)");
+	//$("#imageInfoOwnerName").text(user.Name);
+	//$("#imageInfoOwnerAvatar").css("background-image", "url(../../images/"+ user.AvatarGUID +".png)");
+	$("#imageInfoDlg").dialog('open');
+}
+
 function accountFromForm() {
 
 	if ($("#newAccountForm")[0].checkValidity()) {
@@ -272,6 +299,9 @@ function unsetCookie (cookieName) {
 }
 
 function getCookie (cookieName) {
+	if(!document.cookie.includes(cookieName)){
+		return undefined;
+	}
 	return document.cookie.split('; ').filter(c => c.split('=')[0] == cookieName)[0].split('=')[1];
 }
 
@@ -281,7 +311,7 @@ async function renderConnectivityStatus (isConnected = undefined) {
 	// if true/false, render based on value
 
 	let userInfo;
-	if (isConnected == undefined) {  
+	if (isConnected == undefined) {
 		// check if cookie is set, then test if its expired. set isConnected based on result
 		let cookies = document.cookie;
 		if (cookies.includes("access_token")) {
@@ -299,8 +329,6 @@ async function renderConnectivityStatus (isConnected = undefined) {
 				await pGet("/accounts/" + getCookie('userId'), cookie, data => {
 					isConnected = true;
 					userInfo = data;
-
-					console.debug(`Hello, ${JSON.stringify(data)}`);
 				}, _ => {
 					isConnected = false;
 				});
@@ -313,9 +341,12 @@ async function renderConnectivityStatus (isConnected = undefined) {
 	}
 
 	if (isConnected) {
+		await pGet("/accounts/" + getCookie('userId'), getCookie('access_token'), data => {
+			userInfo = data;
+		}, _ => {});
 		$(".notLoggedIn").hide();
 		$(".loggedIn").show();
-		$("#avatarImage").attr("src", "../../images/" + userInfo.AvatarGUID + ".png");
+		$("#avatarImage").attr("src", userInfo.AvatarURL);
 		$("#accountName").html(userInfo.Name);
 	} else {
 		// if not connected, make sure we don't have a token stored!
@@ -337,12 +368,15 @@ function codeVerification(userId){
 			console.log(error);
 		});
 	}
+
+	renderConnectivityStatus();
 }
 
 function loginHandler () {
 	// set the token when the user logs-in
 
 	if (document.getElementById('accountLoginForm').reportValidity()) {
+
 		let email = $("#emailLogin").val();
 		let password = $("#passwordLogin").val();
 
@@ -350,17 +384,26 @@ function loginHandler () {
 			$('#accountLoginDlg').dialog('close');
 			document.cookie = `access_token=${data.Access_token}; expires=${new Date(data.Expire_Time * 1000).toUTCString()}`;
 			document.cookie = `userId=${data.UserId}`;
-			if(data.Verified != true){
+			if(!data.Verified){
 				userIdToVerify = data.UserId;
-				renderConnectivityStatus(false);
 				verifyCodeDlg();
 			}
 			else{
 				$('#accountLoginDlg').dialog('close');
 				document.cookie = `access_token=${data.Access_token}`;
 				renderConnectivityStatus(true);
+				getImagesList()
 			}
-		}, renderConnectivityStatus(false));
+
+			if ($("#passwordRememberMe").prop('checked'))
+				localStorage.setItem('userEmail', email);
+			else
+				localStorage.removeItem('userEmail');
+		}, () => {
+			renderConnectivityStatus(false);
+			$("#loginFormError").html("Connexion impossible! Votre mot de passe ou email est invalide...");
+
+		});
 	}
 }
 
@@ -370,21 +413,61 @@ function verifyCodeDlg(){
 }
 
 function logout () {
-	console.debug(`Login out userId ${userIdToVerify}`);
-	const _callback = () => renderConnectivityStatus(false);
+	const _callback = () => {renderConnectivityStatus(false); getImagesList();}
 	pGet('/accounts/logout/' + getCookie('userId'), getCookie('access_token'), _callback, _callback);
 }
 
+async function editUser () {
 
+	let userInfo;
+	await pGet("/accounts/" + getCookie('userId'), getCookie('access_token'), data => {
+		userInfo = data;
+	}, _ => {});
+
+	// show the form for resetting user
+	if (userInfo == undefined)
+		return;
+
+	$("#nameEdit").val(userInfo.Name);
+	$("#emailEdit").val(userInfo.Email);
+	$("#imageAvatarEdit_ImageContainer").css('background-image', `url('${userInfo.AvatarURL}')`);
+	$("#passwordEdit").val(userInfo.Password);
+	$("#password_confirmationEdit").val(userInfo.Password);
+
+	$("#editAccountDlg").dialog('open');
+}
+
+function editFormGetData () {
+	let avatar = undefined
+	if ($("#imageAvatarEdit_ImageContainer").css('background-image').includes('data:image'))
+		avatar = ImageUploader.getImageData('imageAvatarEdit');
+	
+	let obj = {
+		"Id": parseInt(getCookie('userId')),
+		"Name": $('#nameEdit').val(),
+		"Email": $("#emailEdit").val(),
+		"Password": $("#passwordEdit").val(),
+		
+	};
+
+	if (avatar !== undefined)
+		obj['ImageData'] = avatar;
+	else
+		obj['AvatarGUID'] = $("#imageAvatarEdit_ImageContainer").css('background-image').match(/\w+-\w+-\w+-\w+-\w+/); // so that the image isn't deleted when we update
+
+	return obj;
+}
 
 function init_UI() {
 	setPasswordConfirmationFor('password', 'password_confirmation');
+	setPasswordConfirmationFor('passwordEdit', 'password_confirmationEdit');
 	renderConnectivityStatus();
 
 	$("#newImageCmd").click(newImage);
 	$("#newAccountCmd").click(newAccount);
 	$("#loginAccountCmd").click(loginDlg);
 	$("#logoutAccountCmd").click(logout);
+	$("#accountCmd").click(editUser);
 
 	$("#newAccountDlg").dialog({
 		title: "...",
@@ -404,7 +487,6 @@ function init_UI() {
 			click: function() {
 				if (document.getElementById("newAccountForm").reportValidity()) {
 					let formData = accountFromForm();
-					console.debug(formData);
 					uPost("/Accounts/register", formData, (data) => loginDlg({ 'email' : data.Email }), error);
 					$(this).dialog('close');
 				}
@@ -418,8 +500,8 @@ function init_UI() {
 		}]
 	});
 
-	$("#modifyAccounttDlg").dialog({
-		title: "...",
+	$("#editAccountDlg").dialog({
+		title: "Modifier mon compte",
 		autoOpen: false,
 		modal: true,
 		show: { effect: 'fade', speed: 400 },
@@ -431,13 +513,12 @@ function init_UI() {
 		minHeight: 640,
 		maxHeight: 800,
 		buttons: [{
-			id: "modifiyUserDlgOkBtn",
-			text: "Modifire mon compte",
+			id: "newUserDlgOkBtn",
+			text: "Modifier",
 			click: function() {
-				if (document.getElementById("newAccountForm").reportValidity()) {
-					let formData = accountFromForm();
-					console.debug(formData);
-					uPost("/Accounts/register", formData, (data) => loginDlg({ 'email' : data.Email }), error);
+				if (document.getElementById("editAccountForm").reportValidity()) {
+					pPut("/accounts/modify", editFormGetData(), getCookie('access_token'), 
+						() => renderConnectivityStatus(true), () => {});
 					$(this).dialog('close');
 				}
 			}
@@ -468,6 +549,7 @@ function init_UI() {
 		{
 			text: "Annuler",
 			click: function() {
+				renderConnectivityStatus(false);
 				$(this).dialog("close");
 			}
 		}]
@@ -516,11 +598,12 @@ function init_UI() {
 				let image = imageFromForm();
 				if (image) {
 					if (createMode) {
-						POST(image, getImagesList, error);
+						pPost("/images",image, getCookie('access_token'), getImagesList, error);
 						$(".scrollContainer").scrollTop(0);
 					}
 					else
-						PUT(image, getImagesList, error);
+						var callback = () => {getImagesList();}
+						pPut("/images/" + image.Id, image, getCookie("access_token"), callback, error);
 					resetimageForm();
 					holdCheckETag = false;
 					$(this).dialog("close");
@@ -529,6 +612,29 @@ function init_UI() {
 		},
 		{
 			text: "Annuler",
+			click: function() {
+				holdCheckETag = false;
+				$(this).dialog("close");
+			}
+		}]
+	});
+
+	$("#imageInfoDlg").dialog({
+		title: "...",
+		autoOpen: false,
+		modal: true,
+		show: { effect: 'fade', speed: 400 },
+		hide: { effect: 'fade', speed: 400 },
+		width: 640,
+		minWidth: 640,
+		maxWidth: 640,
+		height: 780,
+		minHeight: 780,
+		maxHeight: 780,
+		position: { my: "top", at: "top", of: window },
+		buttons: [
+		{
+			text: "Retour",
 			click: function() {
 				holdCheckETag = false;
 				$(this).dialog("close");
@@ -551,7 +657,8 @@ function init_UI() {
 			click: function() {
 				holdCheckETag = false;
 				if (imageIdToDelete)
-					DELETE(imageIdToDelete, getImagesList, error);
+					var callback = () => {getImagesList();}
+					pDelete("/images/" + imageIdToDelete, getCookie('access_token'), callback, error);
 				imageIdToDelete = 0;
 				$(this).dialog("close");
 			}

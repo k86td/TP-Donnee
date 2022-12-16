@@ -81,6 +81,22 @@
                 </div>
             </div>
             <div>
+                <div id="imageInfoDlg">
+                    <div id="imageInfo">
+                        <div id="imageInfoHeader">
+                            <div id="imageInfoTitle"></div>
+                            <div id="imageInfoDate"></div>
+                        </div>
+                        <a id="imageInfoLink" href="">
+                            <div  id="imageInfoImage" class='image'></div>
+                        </a>
+                        <div id="imageInfoDescription"></div>
+                        <div id="imageInfoFooter">
+                            <div id="imageInfoOwnerAvatar" class="avatar"></div>
+                            <div id="imageInfoOwnerName" class="userName"></div>
+                        </div>
+                    </div>
+                </div>
                 <div id="imageDlg">
                     <form id="imageForm">
                         <input type="hidden" id="Id_input" value="0">
@@ -104,15 +120,18 @@
                 </div>
                 <div id="accountLoginDlg">
                     <form id="accountLoginForm">
+						<p style="color: red;" id="loginFormError"></p>
 
                         <label for="emailLogin">Email</label>
                         <input type="text" id="emailLogin" class="form-control" required pattern="\w+@\w+\.\w+" title="Entrer un email valide (email@domaine.tld)"></input>
 
                         <label for="passwordLogin">Password</label>
                         <input type="password" id="passwordLogin" class="form-control" required></input>
-
+						<label for="passwordRememberMe">Se rappeller de moi</label>
+						<input id="passwordRememberMe" type="checkbox">
                     </form>
                 </div>
+
                 <div id="newAccountDlg">
                     <form id="newAccountForm">
 
@@ -134,27 +153,28 @@
                         <div class="note">Cliquez-Déposez une image</div>
                     </form>
                 </div>
-                <div id="modifyAccountDlg">
-                    <form id="modifyAccountForm">
 
-                        <label for="name">Nom</label>
-                        <input type="text" id="name" class="form-control" required>
+                <div id="editAccountDlg">
+                    <form id="editAccountForm">
 
-                        <label for="email">Email</label>
-                        <input type="text" id="email" class="form-control" required pattern="\w+@\w+\.\w+" title="Entrer un email valide (email@domaine.tld)"></input>
+                        <label for="nameEdit">Nom</label>
+                        <input type="text" id="nameEdit" class="form-control" required>
 
-                        <label for="password">Password</label>
-                        <input type="password" id="password" class="form-control" required></input>
+                        <label for="emailEdit">Email</label>
+                        <input type="text" id="emailEdit" class="form-control" required pattern="\w+@\w+\.\w+" title="Entrer un email valide (email@domaine.tld)"></input>
 
-                        <label for="password_confirmation">Confirmation</label>
-                        <input type="password" id="password_confirmation" class="form-control" required></input>
+                        <label for="passwordEdit">Password</label>
+                        <input type="password" id="passwordEdit" class="form-control" required></input>
 
-                        <label for="imageAvatar">Image</label>
-                        <div id='imageAvatar' class='ImageUploader' defaultImage='images/No_Image.png' waitingImage='images/writing.gif'>
-                        </div>
+                        <label for="password_confirmationEdit">Confirmation</label>
+                        <input type="password" id="password_confirmationEdit" class="form-control" required></input>
+
+                        <label for="imageAvatarEdit">Image</label>
+                        <div id='imageAvatarEdit' class='ImageUploader' waitingImage='images/writing.gif'></div>
                         <div class="note">Cliquez-Déposez une image</div>
                     </form>
                 </div>
+
                 <div id="verifyCodeDlg">
                     <form id="verifyCodeForm">
 

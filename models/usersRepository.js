@@ -12,7 +12,7 @@ module.exports =
         bindAvatarURL(user) {
             if (user) {
                 let bindedUser = { ...user };
-                delete bindedUser.Password;
+                // delete bindedUser.Password;
                 if (bindedUser.VerifyCode !== "verified")
                     bindedUser.VerifyCode = "unverified";
                 if (user["AvatarGUID"] != "") {

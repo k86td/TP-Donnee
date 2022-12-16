@@ -73,6 +73,34 @@ async function uPost(endpoint, data, successCallBack, errorCallBack) {
     });
 }
 
+async function pPost(endpoint, data, token, successCallBack, errorCallBack) {
+    return $.ajax({
+        url: baseUrl + endpoint,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader("Authorization", "Bearer " + token);
+		},
+        success: (data) => successCallBack(data),
+        error: (jqXHR) => errorCallBack(jqXHR.status)
+    });
+}
+
+async function pPut(endpoint, data, token, successCallBack, errorCallBack) {
+    return $.ajax({
+        url: baseUrl + endpoint,
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader("Authorization", "Bearer " + token);
+		},
+        success: (data) => successCallBack(data),
+        error: (jqXHR) => errorCallBack(jqXHR.status)
+    });
+}
+
 async function uGet(endpoint, successCallBack, errorCallBack) {
     await $.ajax({
         url: baseUrl + endpoint,
@@ -86,6 +114,32 @@ async function pGet(endpoint, token, successCallBack, errorCallBack) {
     return $.ajax({
         url: baseUrl + endpoint,
         type: 'GET',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader("Authorization", "Bearer " + token);
+		},
+        success: (data) => successCallBack(data),
+        error: (jqXHR) => errorCallBack(jqXHR.status)
+    });
+}
+
+async function pDelete(endpoint, token, successCallBack, errorCallBack) {
+    return $.ajax({
+        url: baseUrl + endpoint,
+        type: 'DELETE',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader("Authorization", "Bearer " + token);
+		},
+        success: (data) => successCallBack(data),
+        error: (jqXHR) => errorCallBack(jqXHR.status)
+    });
+}
+
+async function pPut(endpoint, data, token, successCallBack, errorCallBack) {
+    return $.ajax({
+        url: baseUrl + endpoint,
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
 		beforeSend: function (xhr) {
 			xhr.setRequestHeader("Authorization", "Bearer " + token);
 		},
