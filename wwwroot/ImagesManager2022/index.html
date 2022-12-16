@@ -113,6 +113,7 @@
 
                     </form>
                 </div>
+
                 <div id="newAccountDlg">
                     <form id="newAccountForm">
 
@@ -134,6 +135,28 @@
                         <div class="note">Cliquez-Déposez une image</div>
                     </form>
                 </div>
+
+                <div id="editAccountDlg">
+                    <form id="editAccountForm">
+
+                        <label for="nameEdit">Nom</label>
+                        <input type="text" id="nameEdit" class="form-control" required>
+
+                        <label for="emailEdit">Email</label>
+                        <input type="text" id="emailEdit" class="form-control" required pattern="\w+@\w+\.\w+" title="Entrer un email valide (email@domaine.tld)"></input>
+
+                        <label for="passwordEdit">Password</label>
+                        <input type="password" id="passwordEdit" class="form-control" required></input>
+
+                        <label for="password_confirmationEdit">Confirmation</label>
+                        <input type="password" id="password_confirmationEdit" class="form-control" required></input>
+
+                        <label for="imageAvatarEdit">Image</label>
+                        <div id='imageAvatarEdit' class='ImageUploader' waitingImage='images/writing.gif'></div>
+                        <div class="note">Cliquez-Déposez une image</div>
+                    </form>
+                </div>
+
                 <div id="verifyCodeDlg">
                     <form id="verifyCodeForm">
 

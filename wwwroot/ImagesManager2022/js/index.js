@@ -332,8 +332,6 @@ async function renderConnectivityStatus (isConnected = undefined) {
 		$(".notLoggedIn").show();
 		$(".loggedIn").hide();
 	}
-
-	console.debug(`UserInfo : ${JSON.stringify(userInfo)}`);
 }
 
 function codeVerification(userId){
@@ -381,21 +379,61 @@ function verifyCodeDlg(){
 }
 
 function logout () {
-	console.debug(`Login out userId ${userIdToVerify}`);
 	const _callback = () => {renderConnectivityStatus(false); getImagesList();}
 	pGet('/accounts/logout/' + getCookie('userId'), getCookie('access_token'), _callback, _callback);
 }
 
+async function editUser () {
 
+	let userInfo;
+	await pGet("/accounts/" + getCookie('userId'), getCookie('access_token'), data => {
+		userInfo = data;
+	}, _ => {});
+
+	// show the form for resetting user
+	if (userInfo == undefined)
+		return;
+
+	$("#nameEdit").val(userInfo.Name);
+	$("#emailEdit").val(userInfo.Email);
+	$("#imageAvatarEdit_ImageContainer").css('background-image', `url('${userInfo.AvatarURL}')`);
+	$("#passwordEdit").val(userInfo.Password);
+	$("#password_confirmationEdit").val(userInfo.Password);
+
+	$("#editAccountDlg").dialog('open');
+}
+
+function editFormGetData () {
+	let avatar = undefined
+	if ($("#imageAvatarEdit_ImageContainer").css('background-image').includes('data:image'))
+		avatar = ImageUploader.getImageData('imageAvatarEdit');
+	
+	let obj = {
+		"Id": parseInt(getCookie('userId')),
+		"Name": $('#nameEdit').val(),
+		"Email": $("#emailEdit").val(),
+		"Password": $("#passwordEdit").val(),
+		
+	};
+
+	if (avatar !== undefined)
+		obj['ImageData'] = avatar;
+	else
+		obj['AvatarGUID'] = $("#imageAvatarEdit_ImageContainer").css('background-image').match(/\w+-\w+-\w+-\w+-\w+/); // so that the image isn't deleted when we update
+
+	return obj;
+}
 
 function init_UI() {
 	setPasswordConfirmationFor('password', 'password_confirmation');
+	setPasswordConfirmationFor('passwordEdit', 'password_confirmationEdit');
 	renderConnectivityStatus();
 
 	$("#newImageCmd").click(newImage);
 	$("#newAccountCmd").click(newAccount);
 	$("#loginAccountCmd").click(loginDlg);
 	$("#logoutAccountCmd").click(logout);
+	$("#accountCmd").click(editUser);
 
 	$("#newAccountDlg").dialog({
 		title: "...",
@@ -415,7 +453,6 @@ function init_UI() {
 			click: function() {
 				if (document.getElementById("newAccountForm").reportValidity()) {
 					let formData = accountFromForm();
-					console.debug(formData);
 					uPost("/Accounts/register", formData, (data) => loginDlg({ 'email' : data.Email }), error);
 					$(this).dialog('close');
 				}
@@ -429,8 +466,8 @@ function init_UI() {
 		}]
 	});
 
-	$("#modifyAccounttDlg").dialog({
-		title: "...",
+	$("#editAccountDlg").dialog({
+		title: "Modifier mon compte",
 		autoOpen: false,
 		modal: true,
 		show: { effect: 'fade', speed: 400 },
@@ -442,13 +479,12 @@ function init_UI() {
 		minHeight: 640,
 		maxHeight: 800,
 		buttons: [{
-			id: "modifiyUserDlgOkBtn",
-			text: "Modifire mon compte",
+			id: "newUserDlgOkBtn",
+			text: "Modifier",
 			click: function() {
-				if (document.getElementById("newAccountForm").reportValidity()) {
-					let formData = accountFromForm();
-					console.debug(formData);
-					uPost("/Accounts/register", formData, (data) => loginDlg({ 'email' : data.Email }), error);
+				if (document.getElementById("editAccountForm").reportValidity()) {
+					pPut("/accounts/modify", editFormGetData(), getCookie('access_token'), 
+						() => renderConnectivityStatus(true), () => {});
 					$(this).dialog('close');
 				}
 			}

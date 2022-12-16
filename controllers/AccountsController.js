@@ -27,7 +27,17 @@ module.exports =
 				return this.publicInfo(id);
 			}
 
-			return super.get(id);
+			let data;
+			if (isNaN(id)) {
+				data = this.repository.getAll();
+				data.map(d => delete d.Password);
+			}
+			else {
+				data = this.repository.get(id);
+			}
+			
+
+			this.HttpContext.response.JSON(data);
 		}
 
 		publicInfo (id) {
@@ -140,8 +150,9 @@ module.exports =
                         }
                     }
                     else
-                        if (updateResult == this.repository.updateResult.conflict)
+                        if (updateResult == this.repository.updateResult.conflict) {
                             this.HttpContext.response.conflict();
+						}
                         else
                             if (updateResult == this.repository.updateResult.notfound)
                                 this.HttpContext.response.notFound();
